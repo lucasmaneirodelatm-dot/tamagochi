@@ -1,0 +1,11 @@
+<section class="card">
+  <h2 class="text-2xl font-bold mb-4">Mis Mascotas</h2>
+  <div id="petsListFull" class="grid md:grid-cols-2 gap-4"></div>
+
+  <script>
+    window.onSectionLoaded = name => {
+      if (name !== "pets") return;
+      renderPetsFull();
+    };
+  </script>
+</section>
