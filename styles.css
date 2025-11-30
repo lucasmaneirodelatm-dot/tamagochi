@@ -1,0 +1,62 @@
+/* styles.css - estilos globales y componentes */
+/* Tipografía */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+:root{
+  --accent-1: #667eea;
+  --accent-2: #764ba2;
+  --muted: #f3f4f6;
+  --card-bg: #ffffff;
+  --shadow: 0 6px 18px rgba(20,23,29,0.06);
+}
+*{box-sizing:border-box}
+body{font-family:'Poppins',sans-serif;background:var(--muted);margin:0;color:#0f172a;}
+
+/* Layout */
+.max-w-7xl{max-width:1100px;margin-left:auto;margin-right:auto}
+.container{padding:1rem}
+
+/* Card baseline */
+.card{
+  background:var(--card-bg);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  padding:1rem;
+}
+
+/* Gradiente principal (usado en login) */
+.gradient-bg{
+  background: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 100%);
+}
+
+/* Pet card */
+.pet-card{transition: all 0.3s ease;border-radius:12px;}
+.pet-card:hover{transform:translateY(-6px);}
+
+/* Animaciones */
+@keyframes bounce {
+  0%,20%,50%,80%,100%{transform:translateY(0)}
+  40%{transform:translateY(-10px)}
+  60%{transform:translateY(-5px)}
+}
+.baby-pet{animation:bounce 2s infinite}
+
+/* Modal backdrop */
+.modal{backdrop-filter: blur(8px);}
+
+/* Petting area spotlight */
+.petting-area{
+  background: radial-gradient(circle at var(--x,50%) var(--y,50%), rgba(255,192,203,0.3) 0%, transparent 50%);
+  transition: background 0.25s ease;
+  border-radius:12px;
+}
+
+/* Buttons (fallback if no Tailwind) */
+.btn{
+  display:inline-block;padding:.6rem 1rem;border-radius:10px;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:#fff;border:0;
+}
+.btn-ghost{background:transparent;color:var(--accent-2);border:1px solid rgba(0,0,0,0.06)}
+
+/* Responsive simple */
+@media (max-width:768px){
+  .max-w-7xl{padding:0 12px}
+}
