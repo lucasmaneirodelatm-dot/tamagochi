@@ -1,0 +1,11 @@
+<section class="card">
+  <h2 class="text-2xl font-bold mb-4">Cementerio</h2>
+  <div id="cemeteryList"></div>
+
+  <script>
+    window.onSectionLoaded = name => {
+      if (name !== "cemetery") return;
+      renderCemetery();
+    };
+  </script>
+</section>
