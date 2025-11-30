@@ -1,0 +1,12 @@
+<section class="card">
+  <h2 class="text-2xl font-bold mb-4">Protectora</h2>
+
+  <div id="shelterList" class="grid md:grid-cols-2 gap-4"></div>
+
+  <script>
+    window.onSectionLoaded = name => {
+      if (name !== "shelter") return;
+      renderShelter();
+    };
+  </script>
+</section>
