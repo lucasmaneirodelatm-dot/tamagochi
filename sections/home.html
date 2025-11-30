@@ -1,44 +1,16 @@
-<!-- sections/home.html -->
-<section id="homeSection" class="card">
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <div class="lg:col-span-2">
-      <h2 class="text-2xl font-bold mb-6">🐱 Mis Mascotas</h2>
-      <div id="petsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+<section class="card">
+  <h2 class="text-2xl font-bold mb-4">Mis Mascotas</h2>
 
-      <div id="noPetsMessage" class="text-center py-8 bg-white rounded-xl shadow-sm mt-6">
-        <div class="text-4xl mb-2">🐱</div>
-        <p class="text-gray-500 text-sm">No tienes mascotas</p>
-        <button data-section="shelter" class="btn mt-4">Ir a Protectora</button>
-      </div>
-    </div>
+  <div id="petsList" class="grid md:grid-cols-2 gap-4"></div>
 
-    <div class="space-y-6">
-      <div class="card">
-        <h3 class="text-xl font-semibold mb-4">Inventario</h3>
-        <div id="inventoryList" class="space-y-3 max-h-64 overflow-y-auto">
-          <p class="text-gray-500 text-sm">Inventario vacío</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 class="text-xl font-semibold mb-4">Acciones Rápidas</h3>
-        <div class="space-y-3">
-          <button onclick="feedAllPets()" class="btn w-full">🥫 Alimentar Todos</button>
-          <button onclick="changeAllLitter()" class="btn w-full">🏖️ Cambiar Arena</button>
-          <button onclick="changeAllWater()" class="btn w-full">💧 Cambiar Agua</button>
-          <button onclick="showSection('shop')" class="btn w-full">🛒 Ir a Tienda</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <button class="btn mt-6" data-section="shelter">
+    Adoptar nueva mascota
+  </button>
 
   <script>
-    // código que necesita ejecutarse cada vez que se carga esta sección
-    window.onSectionLoaded = function(name){
-      if(name !== 'home') return;
-      // inicializa displays (estas funciones vienen en scripts/game.js)
-      if (window.updatePetsDisplay) updatePetsDisplay();
-      if (window.updateInventoryDisplay) updateInventoryDisplay();
-    }
+    window.onSectionLoaded = name => {
+      if (name !== "home") return;
+      renderPets();
+    };
   </script>
 </section>
