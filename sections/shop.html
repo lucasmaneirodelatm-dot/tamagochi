@@ -1,0 +1,42 @@
+<!-- sections/shop.html -->
+<section id="shopSection" class="card">
+  <h2 class="text-3xl font-bold mb-8 text-center">🛒 Tienda de Mascotas</h2>
+
+  <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm font-medium mb-2">Buscar productos</label>
+        <input id="shopSearch" type="text" placeholder="Buscar..." class="w-full px-4 py-2 border rounded" onkeyup="filterShop()">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-2">Categoría</label>
+        <select id="shopCategory" onchange="filterShop()" class="w-full px-4 py-2 border rounded">
+          <option value="">Todas</option>
+          <option value="food">Comida</option>
+          <option value="toy">Juguetes</option>
+          <option value="essential">Esenciales</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-2">Precio máximo</label>
+        <select id="shopPrice" onchange="filterShop()" class="w-full px-4 py-2 border rounded">
+          <option value="">Cualquier precio</option>
+          <option value="50">Hasta 50</option>
+          <option value="100">Hasta 100</option>
+          <option value="200">Hasta 200</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="shopContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+  <script>
+    window.onSectionLoaded = function(name){
+      if (name !== 'shop') return;
+      if (window.updateShopDisplay) updateShopDisplay();
+    }
+  </script>
+</section>
