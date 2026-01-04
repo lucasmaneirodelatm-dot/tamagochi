@@ -60,6 +60,12 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+        .pet-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+        }
     </style>
   <style>@view-transition { navigation: auto; }</style>
  </head>
@@ -67,9 +73,11 @@
   <div id="loginScreen" class="min-h-full gradient-bg flex items-center justify-center w-full p-4">
    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
     <div class="text-center mb-8">
-     <h1 class="text-4xl font-bold text-gray-800 mb-2">😻 TAMAGOCHI 🐠</h1>
+     <h1 class="text-4xl font-bold text-gray-800 mb-2">🐱 TAMAGOCHI 🐠</h1>
      <p class="text-gray-600">Cuida a tus mascotas virtuales</p>
-     <p class="text-sm text-blue-600 mt-2">✨ Con IA Cuidadora Automática-💾 Guardado automático de perfiles</p>
+     <p class="text-sm text-blue-600 mt-2">✨ Con IA Cuidadora Automática-💾 Guardado automático de perfiles
+
+</p>
     </div>
     <div class="space-y-6">
      <div><label for="username" class="block text-sm font-medium text-gray-700 mb-2">Usuario</label> <input type="text" id="username" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Escribe tu nombre de usuario">
@@ -583,7 +591,7 @@
         const catPersonalities = ['Cariñoso', 'Juguetón', 'Tímido', 'Dominante', 'Independiente', 'Curioso', 'Perezoso', 'Activo'];
         const catEmojis = ['🐱', '🐈', '🐈‍⬛', '😸', '😺', '😻'];
         const fishEmojis = ['🐠', '🐟', '🐡', '🦈', '🐋'];
-        const fishBreeds = ['Betta', 'Goldfish', 'Guppy', 'Tetra', 'Molly', 'Platy'];
+        const fishBreeds = ['Cometa Amarillo', 'Goldfish', 'Cometa Sarasha', 'Cometa Rojo', 'Cometa Sublukin', 'Carpa Dorada'];
 
         // ==================== UTILITY FUNCTIONS ====================
         function showNotification(message, type = 'info') {
@@ -844,11 +852,16 @@
                 
                 const ageText = pet.age < 60 ? '🍼 Cachorro' : pet.age > 730 ? '👴 Senior' : '🐾 Adulto';
                 
+                const isImageUrl = pet.emoji && pet.emoji.startsWith('http');
+                const petDisplay = isImageUrl 
+                    ? `<img src="${pet.emoji}" alt="${pet.name}" class="pet-image mx-auto mb-2" onerror="this.style.display='none'; this.alt='Imagen no disponible';">` 
+                    : `<div class="text-5xl mb-2">${pet.emoji}</div>`;
+                
                 html += `
                     <div class="pet-card bg-white rounded-xl shadow-sm p-6 cursor-pointer" onclick="openPetDetail('${pet.id}')">
                         <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <div class="text-5xl mb-2">${pet.emoji}</div>
+                            <div class="w-full">
+                                ${petDisplay}
                                 <h3 class="text-xl font-bold text-gray-800">${pet.name}</h3>
                                 <p class="text-xs text-gray-500">${ageText} • ${pet.age} días</p>
                                 <p class="text-sm text-gray-600 mt-1">${pet.type === 'cat' ? `🐱 ${pet.personality}` : `🐠 ${pet.breed}`}</p>
@@ -915,9 +928,14 @@
             const adoptionDate = new Date(pet.adoptionDate).toLocaleDateString();
             const daysSinceAdoption = Math.floor((Date.now() - pet.adoptionDate) / (1000 * 60 * 60 * 24));
             
+            const isImageUrl = pet.emoji && pet.emoji.startsWith('http');
+            const petDisplay = isImageUrl 
+                ? `<img src="${pet.emoji}" alt="${pet.name}" class="w-32 h-32 object-cover rounded-lg mx-auto mb-4" onerror="this.style.display='none'; this.alt='Imagen no disponible';">` 
+                : `<div class="text-8xl mb-4">${pet.emoji}</div>`;
+            
             let detailsHTML = `
                 <div class="text-center mb-6">
-                    <div class="text-8xl mb-4">${pet.emoji}</div>
+                    ${petDisplay}
                     <h4 class="text-2xl font-bold text-gray-800">${pet.name}</h4>
                 </div>
                 
@@ -1271,10 +1289,15 @@
             filteredPets.forEach(pet => {
                 const ageLabel = pet.ageCategory === 'baby' ? '🍼 Cachorro' : pet.ageCategory === 'senior' ? '👴 Senior' : '🐾 Adulto';
                 
+                const isImageUrl = pet.emoji && pet.emoji.startsWith('http');
+                const petDisplay = isImageUrl 
+                    ? `<img src="${pet.emoji}" alt="${pet.name}" class="w-24 h-24 object-cover rounded-lg mx-auto mb-3" onerror="this.style.display='none'; this.alt='Imagen no disponible';">` 
+                    : `<div class="text-6xl mb-3 ${pet.ageCategory === 'baby' ? 'baby-pet' : ''}">${pet.emoji}</div>`;
+                
                 html += `
                     <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-lg transition">
                         <div class="text-center mb-4">
-                            <div class="text-6xl mb-3 ${pet.ageCategory === 'baby' ? 'baby-pet' : ''}">${pet.emoji}</div>
+                            ${petDisplay}
                             <h3 class="text-xl font-bold text-gray-800 mb-1">${pet.name}</h3>
                             <p class="text-xs text-gray-500 mb-2">${ageLabel} • ${pet.age} días</p>
                             <p class="text-sm text-gray-600 mb-2">${pet.type === 'cat' ? `🐱 ${pet.personality}` : `🐠 ${pet.breed}`}</p>
@@ -1345,11 +1368,16 @@
             sickPets.forEach(pet => {
                 const healthStatus = pet.health < 30 ? '🆘 Crítico' : pet.health < 50 ? '⚠️ Grave' : '😷 Enfermo';
                 
+                const isImageUrl = pet.emoji && pet.emoji.startsWith('http');
+                const petDisplay = isImageUrl 
+                    ? `<img src="${pet.emoji}" alt="${pet.name}" class="w-20 h-20 object-cover rounded-lg" onerror="this.style.display='none'; this.alt='Imagen no disponible';">` 
+                    : `<div class="text-5xl">${pet.emoji}</div>`;
+                
                 html += `
                     <div class="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-6">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center space-x-4">
-                                <div class="text-5xl">${pet.emoji}</div>
+                                ${petDisplay}
                                 <div>
                                     <h4 class="font-semibold text-lg text-gray-800">${pet.name}</h4>
                                     <p class="text-sm text-red-600 font-medium">${healthStatus}</p>
@@ -1410,9 +1438,14 @@
                 const deathDate = new Date(pet.deathDate).toLocaleDateString();
                 const daysLived = Math.floor((pet.deathDate - pet.adoptionDate) / (1000 * 60 * 60 * 24));
                 
+                const isImageUrl = pet.emoji && pet.emoji.startsWith('http');
+                const petDisplay = isImageUrl 
+                    ? `<img src="${pet.emoji}" alt="${pet.name}" class="w-20 h-20 object-cover rounded-lg mx-auto mb-3 opacity-60" onerror="this.style.display='none'; this.alt='Imagen no disponible';">` 
+                    : `<div class="text-5xl mb-3 opacity-60">${pet.emoji}</div>`;
+                
                 html += `
                     <div class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-6 text-center border-2 border-gray-300">
-                        <div class="text-5xl mb-3 opacity-60">${pet.emoji}</div>
+                        ${petDisplay}
                         <h4 class="font-semibold text-gray-800 text-lg mb-1">${pet.name}</h4>
                         <p class="text-xs text-gray-600 mb-2">${pet.type === 'cat' ? '🐱 Gato' : '🐠 Pez'}</p>
                         <p class="text-xs text-gray-500 mb-1">Vivió ${daysLived} días contigo</p>
@@ -1823,5 +1856,5 @@
             console.log('🎮 TAMAGOCHI Game loaded successfully');
         });
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9acbd7a4727bcc40',t:'MTc2NTUyODA0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b8ac82c96c5cfb5',t:'MTc2NzUzMDE5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
