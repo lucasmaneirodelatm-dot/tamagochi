@@ -75,9 +75,7 @@
     <div class="text-center mb-8">
      <h1 class="text-4xl font-bold text-gray-800 mb-2">🐱 TAMAGOCHI 🐠</h1>
      <p class="text-gray-600">Cuida a tus mascotas virtuales</p>
-     <p class="text-sm text-blue-600 mt-2">✨ Con IA Cuidadora Automática-💾 Guardado automático de perfiles
-
-</p>
+     <p class="text-sm text-blue-600 mt-2">✨ Con IA Cuidadora Automática-💾✔️Guardado corregido de perfiles y Datos</p>
     </div>
     <div class="space-y-6">
      <div><label for="username" class="block text-sm font-medium text-gray-700 mb-2">Usuario</label> <input type="text" id="username" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Escribe tu nombre de usuario">
@@ -513,7 +511,7 @@
        <div class="text-xs text-gray-700 space-y-1">
         <p>• 👤 Cuidador HUMANO (requiere aceptación)</p>
         <p>• 💰 Pago al aceptar solicitud</p>
-        <p>• 🟢 El cuidador debe estar disponible</p>
+        <p>• ��� El cuidador debe estar disponible</p>
        </div>
       </div>
       <div class="space-y-4 mb-6">
@@ -568,7 +566,7 @@
                 
                 // Accesorios
                 { id: 10, name: 'Collar con cascabel', price: 35, category: 'accessory', emoji: '🔔', petType: 'cat', description: 'Collar bonito' },
-                { id: 11, name: 'Cama acolchada', price: 50, category: 'accessory', emoji: '🛏️', petType: 'cat', description: 'Cama cómoda' },
+                { id: 11, name: 'Cama acolchada', price: 50, category: 'accessory', emoji: '����', petType: 'cat', description: 'Cama cómoda' },
                 { id: 12, name: 'Corona', price: 45, category: 'accessory', emoji: '👑', petType: 'cat', description: 'Para mascotas VIP' },
                 { id: 13, name: 'Pecera decorada', price: 80, category: 'accessory', emoji: '🏠', petType: 'fish', description: 'Hogar hermoso' }
             ]
@@ -591,7 +589,7 @@
         const catPersonalities = ['Cariñoso', 'Juguetón', 'Tímido', 'Dominante', 'Independiente', 'Curioso', 'Perezoso', 'Activo'];
         const catEmojis = ['🐱', '🐈', '🐈‍⬛', '😸', '😺', '😻'];
         const fishEmojis = ['🐠', '🐟', '🐡', '🦈', '🐋'];
-        const fishBreeds = ['Cometa Amarillo', 'Goldfish', 'Cometa Sarasha', 'Cometa Rojo', 'Cometa Sublukin', 'Carpa Dorada'];
+        const fishBreeds = ['Betta', 'Goldfish', 'Guppy', 'Tetra', 'Molly', 'Platy'];
 
         // ==================== UTILITY FUNCTIONS ====================
         function showNotification(message, type = 'info') {
@@ -942,7 +940,7 @@
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <div class="bg-gray-50 rounded-lg p-4">
                         <div class="text-xs text-gray-600 mb-1">Tipo</div>
-                        <div class="font-semibold">${pet.type === 'cat' ? '🐱 Gato' : '🐠 Pez'}</div>
+                        <div class="font-semibold">${pet.type === 'cat' ? '🐱 Gato' : '���� Pez'}</div>
                     </div>
                     <div class="bg-gray-50 rounded-lg p-4">
                         <div class="text-xs text-gray-600 mb-1">Edad</div>
@@ -1056,6 +1054,7 @@
             pet.hunger = Math.min(100, (pet.hunger || 50) + 35);
             pet.happiness = Math.min(100, (pet.happiness || 70) + 5);
             
+            savePersistentData();
             updatePetsDisplay();
             updateInventoryDisplay();
             updateQuickStats();
@@ -1853,8 +1852,8 @@
 
         // ==================== INITIALIZATION ====================
         window.addEventListener('load', function() {
-            console.log('🎮 TAMAGOCHI Game loaded successfully');
+            console.log('�� TAMAGOCHI Game loaded successfully');
         });
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b8ac82c96c5cfb5',t:'MTc2NzUzMDE5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b9b591741ffcc40',t:'MTc2NzcwMzg5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
