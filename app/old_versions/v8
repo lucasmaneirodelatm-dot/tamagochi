@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gatos y Peces - Juego Virtual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .pet-card { transition: all 0.3s ease; }
+        .pet-card:hover { transform: translateY(-5px); }
+        .modal { backdrop-filter: blur(10px); }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .shop-item { transition: all 0.2s ease; }
+        .shop-item:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen gradient-bg flex items-center justify-center">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">🐱 Gatos y Peces 🐠</h1>
+                <p class="text-gray-600">Perros próximamente</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+                    <input type="text" id="username" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ingresa tu usuario">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                    <input type="password" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="GAME-****">
+                </div>
+                
+                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-200">
+                    Iniciar Sesión
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <button id="createAccountBtn" class="text-blue-600 hover:text-blue-800 font-medium">
+                    Crear nueva cuenta
+                </button>
+                
+                <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                    <p class="text-sm text-blue-700 font-medium mb-2">💡 Acceso rápido:</p>
+                    <p class="text-xs text-blue-600">Puedes usar cualquier usuario y contraseña para crear una cuenta automáticamente</p>
+                    <p class="text-xs text-blue-600 mt-1">Ejemplo: usuario "jugador1" con contraseña "GAME-123"</p>
+                </div>
+            </div>
+            
+
+        </div>
+    </div>
+
+    <!-- Create Account Modal -->
+    <div id="createAccountModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Crear Nueva Cuenta</h2>
+            
+            <form id="createAccountForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+                    <input type="text" id="newUsername" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nombre de usuario">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                    <input type="password" id="newPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="GAME-****">
+                    <p class="text-xs text-gray-500 mt-1">Debe comenzar con GAME-</p>
+                </div>
+                
+                <div class="flex space-x-3 pt-4">
+                    <button type="submit" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition duration-200">
+                        Crear Cuenta
+                    </button>
+                    <button type="button" id="cancelCreateBtn" class="flex-1 bg-gray-500 text-white py-3 rounded-lg font-semibold hover:bg-gray-600 transition duration-200">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Game Interface -->
+    <div id="gameScreen" class="hidden">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-4">
+                        <h1 class="text-2xl font-bold text-gray-800">🐱 Gatos y Peces</h1>
+                        <span id="userWelcome" class="text-gray-600"></span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-6">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-yellow-500">🪙</span>
+                            <span id="userCoins" class="font-semibold">1000</span>
+                            <span class="text-sm text-gray-600">Monedas</span>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <button id="homeBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Casa</button>
+                            <button id="shopBtn" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Tienda</button>
+                            <button id="shelterBtn" class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">Protectora</button>
+                            <button id="vetBtn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Veterinario</button>
+                            <button id="transportBtn" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">VITRASA</button>
+                            <button id="adminBtn" class="hidden px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900">Admin</button>
+                        </div>
+                        
+                        <button id="logoutBtn" class="text-gray-500 hover:text-gray-700">Salir</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Home Section -->
+        <div id="homeSection" class="max-w-7xl mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Cats Display -->
+                <div class="lg:col-span-2">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">🐱 Mis Gatos</h2>
+                        <div class="text-sm text-gray-600">
+                            <span>⏰ <span id="gameTime">Día 1, Mes 1, Año 1</span></span>
+                        </div>
+                    </div>
+                    
+                    <div id="catsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Cats will be dynamically added here -->
+                    </div>
+                    
+                    <div id="noCatsMessage" class="text-center py-8 bg-white rounded-xl shadow-sm">
+                        <div class="text-4xl mb-2">🐱</div>
+                        <p class="text-gray-500 text-sm">No tienes gatos</p>
+                    </div>
+
+                    <!-- Aquariums Display -->
+                    <div class="mt-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">🐠 Mis Peceras</h2>
+                        
+                        <div id="aquariumsContainer" class="space-y-4">
+                            <!-- Aquariums will be dynamically added here -->
+                        </div>
+                        
+                        <div id="noAquariumsMessage" class="text-center py-8 bg-white rounded-xl shadow-sm">
+                            <div class="text-4xl mb-2">🏠</div>
+                            <p class="text-gray-500 text-sm mb-4">No tienes peceras</p>
+                            <button onclick="showSection('shop')" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 text-sm">
+                                Comprar Pecera
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Inventory -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Inventario</h3>
+                        <div id="inventoryList" class="space-y-3">
+                            <!-- Inventory items will be added here -->
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Acciones Rápidas</h3>
+                        <div class="space-y-3">
+                            <button onclick="setupAquarium()" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 text-sm">
+                                🏠 Instalar Pecera
+                            </button>
+                            <button onclick="showSection('shelter')" class="w-full bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 text-sm">
+                                🏠 Adoptar Mascota
+                            </button>
+                            <button onclick="feedAllPets()" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 text-sm">
+                                🥫 Alimentar Todos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shop Section -->
+        <div id="shopSection" class="hidden max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">🛒 Tienda de Mascotas</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Shop items will be dynamically added -->
+            </div>
+        </div>
+
+        <!-- Shelter Section -->
+        <div id="shelterSection" class="hidden max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">🏠 Protectora de Animales</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Available pets for adoption -->
+            </div>
+        </div>
+
+        <!-- Veterinarian Section -->
+        <div id="vetSection" class="hidden max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">🏥 Veterinario</h2>
+            
+            <div class="bg-white rounded-xl shadow-sm p-8">
+                <div class="text-center mb-8">
+                    <div class="text-6xl mb-4">👨‍⚕️</div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2">Dr. Pérez</h3>
+                    <p class="text-gray-600">Consulta: 50 monedas</p>
+                </div>
+                
+                <div id="sickPetsList" class="space-y-4">
+                    <!-- Sick pets will appear here -->
+                </div>
+                
+                <div id="noSickPets" class="text-center py-8">
+                    <p class="text-gray-500">¡Todas tus mascotas están sanas! 🎉</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transport Section -->
+        <div id="transportSection" class="hidden max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">🚌 VITRASA - Transporte</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-xl shadow-sm p-6 text-center">
+                    <div class="text-4xl mb-4">🚌</div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Línea C1</h3>
+                    <p class="text-sm text-gray-600 mb-4">Casa → Tienda → Veterinario → Casa</p>
+                    <button onclick="takeTransport('C1')" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
+                        15 monedas
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6 text-center">
+                    <div class="text-4xl mb-4">🚌</div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Línea 5A</h3>
+                    <p class="text-sm text-gray-600 mb-4">Casa → Tienda → Casa</p>
+                    <button onclick="takeTransport('5A')" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600">
+                        15 monedas
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6 text-center">
+                    <div class="text-4xl mb-4">🚌</div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Línea 15C</h3>
+                    <p class="text-sm text-gray-600 mb-4">Casa → Protectora → Tienda → Protectora → Casa</p>
+                    <button onclick="takeTransport('15C')" class="w-full bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600">
+                        15 monedas
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6 text-center">
+                    <div class="text-4xl mb-4">🚌</div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Línea 28</h3>
+                    <p class="text-sm text-gray-600 mb-4">Casa → Veterinario → Casa</p>
+                    <button onclick="takeTransport('28')" class="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600">
+                        15 monedas
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Section -->
+        <div id="adminSection" class="hidden max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">⚙️ Panel de Administrador</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Pet Management -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Gestión de Animales</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Agregar Nueva Raza</label>
+                            <div class="flex space-x-2">
+                                <select id="newPetType" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg">
+                                    <option value="cat">Gato</option>
+                                    <option value="fish">Pez</option>
+                                </select>
+                                <input type="text" id="newBreedName" placeholder="Nombre de la raza" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg">
+                                <button onclick="addBreed()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                                    Agregar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="breedsList" class="space-y-2">
+                            <!-- Breeds will be listed here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Shop Management -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Gestión de Tienda</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Agregar Producto</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="newItemName" placeholder="Nombre del producto" class="px-3 py-2 border border-gray-300 rounded-lg">
+                                <input type="number" id="newItemPrice" placeholder="Precio" class="px-3 py-2 border border-gray-300 rounded-lg">
+                                <select id="newItemCategory" class="px-3 py-2 border border-gray-300 rounded-lg">
+                                    <option value="food">Comida</option>
+                                    <option value="toy">Juguete</option>
+                                    <option value="accessory">Accesorio</option>
+                                    <option value="medicine">Medicina</option>
+                                </select>
+                                <button onclick="addShopItem()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                                    Agregar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="shopItemsList" class="space-y-2 max-h-64 overflow-y-auto">
+                            <!-- Shop items will be listed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Birth Management -->
+            <div class="mt-8 bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Gestión de Nacimientos</h3>
+                <div id="birthsList" class="space-y-4">
+                    <!-- Birth records will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="petModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+            <div id="petModalContent">
+                <!-- Pet details will be shown here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            currentUser: null,
+            users: {},
+            gameTime: {
+                hour: 8,
+                day: 1,
+                month: 1,
+                year: 1
+            },
+            shopItems: [
+                { id: 1, name: 'Comida para gatos', price: 25, category: 'food', emoji: '🥫' },
+                { id: 2, name: 'Comida para peces', price: 15, category: 'food', emoji: '🐟' },
+                { id: 3, name: 'Juguete ratón', price: 30, category: 'toy', emoji: '🐭' },
+                { id: 4, name: 'Pecera pequeña', price: 80, category: 'aquarium', emoji: '🏠', capacity: 3 },
+                { id: 5, name: 'Pecera mediana', price: 150, category: 'aquarium', emoji: '🏘️', capacity: 6 },
+                { id: 6, name: 'Pecera grande', price: 250, category: 'aquarium', emoji: '🏰', capacity: 10 },
+                { id: 7, name: 'Collar básico', price: 35, category: 'collar', emoji: '🔗' },
+                { id: 8, name: 'Collar elegante', price: 65, category: 'collar', emoji: '🎀' },
+                { id: 9, name: 'Collar de diamantes', price: 120, category: 'collar', emoji: '💎' },
+                { id: 10, name: 'Collar con cascabel', price: 45, category: 'collar', emoji: '🔔' },
+                { id: 11, name: 'Cama suave', price: 80, category: 'accessory', emoji: '🛏️' },
+                { id: 12, name: 'Arenero', price: 60, category: 'accessory', emoji: '📦' },
+                { id: 13, name: 'Adorno coral', price: 35, category: 'decoration', emoji: '🪸' },
+                { id: 14, name: 'Castillo acuático', price: 55, category: 'decoration', emoji: '🏰' },
+                { id: 15, name: 'Piña decorativa', price: 25, category: 'decoration', emoji: '🍍' },
+                { id: 16, name: 'Cueva rocosa', price: 40, category: 'decoration', emoji: '🪨' },
+                { id: 17, name: 'Planta acuática', price: 20, category: 'decoration', emoji: '🌿' },
+                { id: 18, name: 'Vacuna completa', price: 12, category: 'medicine', emoji: '💉' },
+                { id: 19, name: 'Antibiótico', price: 20, category: 'medicine', emoji: '💊' },
+                { id: 20, name: 'Vitaminas', price: 15, category: 'medicine', emoji: '🧪' },
+                { id: 21, name: 'Antiparasitario', price: 18, category: 'medicine', emoji: '🩹' }
+            ],
+            availablePets: [],
+            breeds: {
+                cat: [
+                    { name: 'Siamés', emoji: '🐱', colors: ['crema', 'chocolate'], photo: 'https://images.unsplash.com/photo-1513245543132-31f507417b26?w=300&h=300&fit=crop' },
+                    { name: 'Persa', emoji: '😺', colors: ['blanco', 'gris', 'naranja'], photo: 'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=300&h=300&fit=crop' },
+                    { name: 'Maine Coon', emoji: '🦁', colors: ['marrón', 'gris'], photo: 'https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=300&h=300&fit=crop' },
+                    { name: 'Británico', emoji: '😸', colors: ['gris', 'azul'], photo: 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=300&h=300&fit=crop' },
+                    { name: 'Bengalí', emoji: '🐅', colors: ['dorado', 'manchado'], photo: 'https://images.unsplash.com/photo-1606214174585-fe31582cd22c?w=300&h=300&fit=crop' },
+                    { name: 'Ragdoll', emoji: '😻', colors: ['crema', 'azul'], photo: 'https://images.unsplash.com/photo-1571566882372-1598d88abd90?w=300&h=300&fit=crop' },
+                    { name: 'Sphynx', emoji: '🙀', colors: ['rosa', 'gris'], photo: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=300&h=300&fit=crop' },
+                    { name: 'Abisinio', emoji: '😾', colors: ['canela', 'rojizo'], photo: 'https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=300&h=300&fit=crop' }
+                ],
+                fish: [
+                    { name: 'Goldfish', emoji: '🐠', colors: ['dorado', 'naranja'], photo: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&h=300&fit=crop' },
+                    { name: 'Betta', emoji: '🐟', colors: ['azul', 'rojo', 'morado'], photo: 'https://images.unsplash.com/photo-1520637836862-4d197d17c93a?w=300&h=300&fit=crop' },
+                    { name: 'Guppy', emoji: '🟠', colors: ['multicolor', 'azul'], photo: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=300&h=300&fit=crop' },
+                    { name: 'Tetra', emoji: '🔵', colors: ['neón', 'plateado'], photo: 'https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=300&h=300&fit=crop' },
+                    { name: 'Ángel', emoji: '🔶', colors: ['plateado', 'rayado'], photo: 'https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=300&h=300&fit=crop' },
+                    { name: 'Molly', emoji: '⚫', colors: ['negro', 'plateado'], photo: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=300&h=300&fit=crop' },
+                    { name: 'Platy', emoji: '🟡', colors: ['amarillo', 'rojo'], photo: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=300&fit=crop' },
+                    { name: 'Corydora', emoji: '🟤', colors: ['marrón', 'moteado'], photo: 'https://images.unsplash.com/photo-1571752726703-5e7d1f6a986d?w=300&h=300&fit=crop' }
+                ]
+            },
+            petNames: {
+                cat: {
+                    male: ['Simba', 'Garfield', 'Félix', 'Shadow', 'Tiger', 'Smokey', 'Max', 'Charlie', 'Leo', 'Milo'],
+                    female: ['Luna', 'Nala', 'Bella', 'Mittens', 'Coco', 'Mia', 'Chloe', 'Sophie', 'Lily', 'Zoe']
+                },
+                fish: {
+                    male: ['Nemo', 'Finn', 'Neptuno', 'Azul', 'Dorado', 'Cristal', 'Océano', 'Splash', 'Aqua', 'Coral'],
+                    female: ['Dory', 'Marina', 'Perla', 'Estrella', 'Sirena', 'Burbuja', 'Coral', 'Aqua', 'Luna', 'Bella']
+                }
+            }
+        };
+
+        // Initialize game
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGameData();
+            initializeGame();
+            startGameTime();
+            generateInitialPets();
+        });
+
+        function loadGameData() {
+            const savedData = localStorage.getItem('catsFishGameData');
+            if (savedData) {
+                const parsed = JSON.parse(savedData);
+                gameState.users = parsed.users || {};
+                gameState.gameTime = parsed.gameTime || gameState.gameTime;
+                gameState.availablePets = parsed.availablePets || [];
+            }
+            
+            // Create admin account if it doesn't exist
+            if (!gameState.users['admin']) {
+                gameState.users['admin'] = {
+                    password: 'GAME-ADMIN',
+                    isAdmin: true,
+                    coins: 5000,
+                    pets: [],
+                    aquariums: [],
+                    inventory: {
+                        'Comida para gatos': 5,
+                        'Comida para peces': 5,
+                        'Medicina básica': 3,
+                        'Vitaminas': 2,
+                        'Pecera grande': 1
+                    }
+                };
+            }
+        }
+
+        function saveGameData() {
+            const dataToSave = {
+                users: gameState.users,
+                gameTime: gameState.gameTime,
+                availablePets: gameState.availablePets
+            };
+            localStorage.setItem('catsFishGameData', JSON.stringify(dataToSave));
+        }
+
+        function initializeGame() {
+            // Event listeners
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('createAccountBtn').addEventListener('click', showCreateAccountModal);
+            document.getElementById('createAccountForm').addEventListener('submit', handleCreateAccount);
+            document.getElementById('cancelCreateBtn').addEventListener('click', hideCreateAccountModal);
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            
+            // Navigation buttons
+            document.getElementById('homeBtn').addEventListener('click', () => showSection('home'));
+            document.getElementById('shopBtn').addEventListener('click', () => showSection('shop'));
+            document.getElementById('shelterBtn').addEventListener('click', () => showSection('shelter'));
+            document.getElementById('vetBtn').addEventListener('click', () => showSection('vet'));
+            document.getElementById('transportBtn').addEventListener('click', () => showSection('transport'));
+            document.getElementById('adminBtn').addEventListener('click', () => showSection('admin'));
+
+            updateDisplay();
+        }
+
+        function generateInitialPets() {
+            if (gameState.availablePets.length < 3) {
+                for (let i = 0; i < 5; i++) {
+                    addRandomPetToShelter();
+                }
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+
+            // Check if user exists, if not create a demo account
+            if (!gameState.users[username]) {
+                // Create demo account automatically
+                gameState.users[username] = {
+                    password: password,
+                    isAdmin: username === 'admin',
+                    coins: 1000,
+                    pets: [],
+                    aquariums: [], // Array of aquarium objects
+                    inventory: {
+                        'Comida para gatos': 3,
+                        'Comida para peces': 3,
+                        'Vitaminas': 2
+                    }
+                };
+                saveGameData();
+            }
+
+            if (gameState.users[username] && gameState.users[username].password === password) {
+                gameState.currentUser = username;
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('gameScreen').classList.remove('hidden');
+                
+                if (gameState.users[username].isAdmin) {
+                    document.getElementById('adminBtn').classList.remove('hidden');
+                }
+                
+                // Clear form
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                
+                updateDisplay();
+                showSection('home');
+                saveGameData();
+            } else {
+                alert('Usuario o contraseña incorrectos');
+            }
+        }
+
+        function showCreateAccountModal() {
+            document.getElementById('createAccountModal').classList.remove('hidden');
+        }
+
+        function hideCreateAccountModal() {
+            document.getElementById('createAccountModal').classList.add('hidden');
+            // Clear form
+            document.getElementById('newUsername').value = '';
+            document.getElementById('newPassword').value = '';
+        }
+
+        function handleCreateAccount(e) {
+            e.preventDefault();
+            const username = document.getElementById('newUsername').value.trim();
+            const password = document.getElementById('newPassword').value.trim();
+            
+            if (!username || !password) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+            
+            if (gameState.users[username]) {
+                alert('Este usuario ya existe');
+                return;
+            }
+            
+            if (!password.startsWith('GAME-')) {
+                alert('La contraseña debe comenzar con GAME-');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('La contraseña debe tener al menos 6 caracteres');
+                return;
+            }
+            
+            gameState.users[username] = {
+                password: password,
+                isAdmin: false,
+                coins: 1000,
+                pets: [],
+                aquariums: [],
+                inventory: {
+                    'Comida para gatos': 3,
+                    'Comida para peces': 3,
+                    'Vitaminas': 2
+                }
+            };
+            
+            saveGameData();
+            hideCreateAccountModal();
+            alert('¡Cuenta creada exitosamente! Ya puedes iniciar sesión.');
+        }
+
+        function logout() {
+            gameState.currentUser = null;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('adminBtn').classList.add('hidden');
+        }
+
+        function showSection(section) {
+            // Hide all sections
+            const sections = ['home', 'shop', 'shelter', 'vet', 'transport', 'admin'];
+            sections.forEach(s => {
+                document.getElementById(s + 'Section').classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(section + 'Section').classList.remove('hidden');
+            
+            // Update section content
+            switch(section) {
+                case 'home':
+                    updatePetsDisplay();
+                    updateInventoryDisplay();
+                    break;
+                case 'shop':
+                    updateShopDisplay();
+                    break;
+                case 'shelter':
+                    updateShelterDisplay();
+                    break;
+                case 'vet':
+                    updateVetDisplay();
+                    break;
+                case 'admin':
+                    updateAdminDisplay();
+                    break;
+            }
+        }
+
+        function updateDisplay() {
+            if (!gameState.currentUser) return;
+            
+            const user = gameState.users[gameState.currentUser];
+            document.getElementById('userWelcome').textContent = `Bienvenido, ${gameState.currentUser}`;
+            document.getElementById('userCoins').textContent = user.coins;
+            document.getElementById('gameTime').textContent = `${gameState.gameTime.hour}:00h - Día ${gameState.gameTime.day}, Mes ${gameState.gameTime.month}, Año ${gameState.gameTime.year}`;
+        }
+
+        function updatePetsDisplay() {
+            const user = gameState.users[gameState.currentUser];
+            updateCatsDisplay();
+            updateAquariumsDisplay();
+        }
+
+        function updateCatsDisplay() {
+            const user = gameState.users[gameState.currentUser];
+            const cats = user.pets.filter(pet => pet.type === 'cat');
+            const container = document.getElementById('catsContainer');
+            const noMessage = document.getElementById('noCatsMessage');
+            
+            if (cats.length === 0) {
+                container.innerHTML = '';
+                noMessage.classList.remove('hidden');
+                return;
+            }
+            
+            noMessage.classList.add('hidden');
+            container.innerHTML = cats.map(pet => {
+                const health = Math.round(pet.health * 10) / 10;
+                const happiness = Math.round(pet.happiness * 10) / 10;
+                const age = Math.round(pet.age * 10) / 10;
+                const breedData = gameState.breeds.cat.find(b => b.name === pet.breed);
+                
+                return `
+                <div class="pet-card bg-white rounded-xl shadow-sm p-4 cursor-pointer" onclick="showPetDetails('${pet.id}')">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden bg-gray-200">
+                            <img src="${breedData?.photo || ''}" alt="${pet.name}" class="w-full h-full object-cover" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div class="text-4xl pt-4 hidden">${pet.emoji}</div>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">${pet.name}</h3>
+                        <p class="text-xs text-gray-600 mb-1">${pet.gender === 'male' ? '♂️' : '♀️'} ${pet.breed}</p>
+                        <p class="text-xs text-gray-500 mb-2">${pet.color} • ${age} ${age === 1 ? 'mes' : 'meses'}</p>
+                        ${pet.collar ? `<p class="text-purple-600 text-xs mb-2">🎀 ${pet.collar}</p>` : ''}
+                        
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between text-xs">
+                                <span>Salud:</span>
+                                <span class="${health > 70 ? 'text-green-600' : health > 40 ? 'text-yellow-600' : 'text-red-600'}">${health}%</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs">
+                                <span>Felicidad:</span>
+                                <span class="${happiness > 70 ? 'text-green-600' : happiness > 40 ? 'text-yellow-600' : 'text-red-600'}">${happiness}%</span>
+                            </div>
+                        </div>
+                        
+                        ${health < 50 ? '<div class="mt-2 text-red-500 text-xs">🤒 Enfermo</div>' : ''}
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function updateAquariumsDisplay() {
+            const user = gameState.users[gameState.currentUser];
+            const container = document.getElementById('aquariumsContainer');
+            const noMessage = document.getElementById('noAquariumsMessage');
+            
+            if (!user.aquariums || user.aquariums.length === 0) {
+                container.innerHTML = '';
+                noMessage.classList.remove('hidden');
+                return;
+            }
+            
+            noMessage.classList.add('hidden');
+            container.innerHTML = user.aquariums.map(aquarium => {
+                const fish = user.pets.filter(pet => pet.aquariumId === aquarium.id);
+                const capacity = aquarium.capacity;
+                const used = fish.length;
+                
+                return `
+                <div class="bg-white rounded-xl shadow-sm p-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="font-semibold text-gray-800">${aquarium.emoji} ${aquarium.name}</h4>
+                        <span class="text-sm text-gray-600">${used}/${capacity} peces</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-5 gap-2 mb-3 min-h-[60px] bg-blue-50 rounded-lg p-2">
+                        ${fish.map(pet => {
+                            const breedData = gameState.breeds.fish.find(b => b.name === pet.breed);
+                            return `
+                            <div class="text-center cursor-pointer" onclick="showPetDetails('${pet.id}')">
+                                <div class="w-10 h-10 mx-auto mb-1 rounded-full overflow-hidden bg-blue-100">
+                                    <img src="${breedData?.photo || ''}" alt="${pet.name}" class="w-full h-full object-cover" 
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div class="text-lg pt-1 hidden">${pet.emoji}</div>
+                                </div>
+                                <p class="text-xs text-gray-700">${pet.name}</p>
+                                <p class="text-xs text-gray-500">${pet.gender === 'male' ? '♂️' : '♀️'}</p>
+                            </div>
+                        `}).join('')}
+                        ${Array(capacity - used).fill().map(() => `
+                            <div class="w-10 h-10 mx-auto border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center">
+                                <span class="text-gray-400 text-xs">+</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <button onclick="addFishToAquarium('${aquarium.id}')" 
+                                class="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 ${used >= capacity ? 'opacity-50 cursor-not-allowed' : ''}"
+                                ${used >= capacity ? 'disabled' : ''}>
+                            + Agregar Pez
+                        </button>
+                        <button onclick="removeAquarium('${aquarium.id}')" class="text-sm text-red-500 hover:text-red-700">
+                            Quitar Pecera
+                        </button>
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function updateInventoryDisplay() {
+            const user = gameState.users[gameState.currentUser];
+            const container = document.getElementById('inventoryList');
+            
+            const items = Object.entries(user.inventory).filter(([name, quantity]) => quantity > 0);
+            
+            if (items.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center">Inventario vacío</p>';
+                return;
+            }
+            
+            container.innerHTML = items.map(([name, quantity]) => {
+                const item = gameState.shopItems.find(i => i.name === name);
+                const emoji = item ? item.emoji : '📦';
+                
+                return `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl">${emoji}</span>
+                            <span class="font-medium text-gray-800">${name}</span>
+                        </div>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-medium">${quantity}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateShopDisplay() {
+            const container = document.getElementById('shopSection');
+            const itemsGrid = container.querySelector('.grid') || container;
+            
+            itemsGrid.innerHTML = gameState.shopItems.map(item => `
+                <div class="shop-item bg-white rounded-xl shadow-sm p-6 text-center">
+                    <div class="text-4xl mb-4">${item.emoji}</div>
+                    <h3 class="font-semibold text-gray-800 mb-2">${item.name}</h3>
+                    <p class="text-2xl font-bold text-green-600 mb-4">${item.price} 🪙</p>
+                    <button onclick="buyItem(${item.id})" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200">
+                        Comprar
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function updateShelterDisplay() {
+            const container = document.getElementById('shelterSection');
+            const petsGrid = container.querySelector('.grid') || container;
+            
+            if (gameState.availablePets.length === 0) {
+                petsGrid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="text-6xl mb-4">🏠</div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No hay mascotas disponibles</h3>
+                        <p class="text-gray-500">Vuelve más tarde, llegan nuevas mascotas cada hora</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            petsGrid.innerHTML = gameState.availablePets.map(pet => {
+                const health = Math.round(pet.health * 10) / 10;
+                const happiness = Math.round(pet.happiness * 10) / 10;
+                const age = Math.round(pet.age * 10) / 10;
+                const breedData = gameState.breeds[pet.type].find(b => b.name === pet.breed);
+                
+                return `
+                <div class="bg-white rounded-xl shadow-sm p-6 text-center">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden bg-gray-200">
+                        <img src="${breedData?.photo || ''}" alt="${pet.name}" class="w-full h-full object-cover" 
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div class="text-6xl pt-4 hidden">${pet.emoji}</div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">${pet.name}</h3>
+                    <p class="text-gray-600 mb-1">${pet.gender === 'male' ? '♂️' : '♀️'} ${pet.breed}</p>
+                    <p class="text-gray-500 mb-4">${pet.color} • ${age} ${age === 1 ? 'mes' : 'meses'}</p>
+                    
+                    <div class="mb-4 space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span>Salud:</span>
+                            <span class="${health > 70 ? 'text-green-600' : health > 40 ? 'text-yellow-600' : 'text-red-600'}">${health}%</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span>Felicidad:</span>
+                            <span class="${happiness > 70 ? 'text-green-600' : happiness > 40 ? 'text-yellow-600' : 'text-red-600'}">${happiness}%</span>
+                        </div>
+                    </div>
+                    
+                    ${pet.type === 'fish' ? '<p class="text-orange-600 text-xs mb-2">⚠️ Requiere pecera instalada</p>' : ''}
+                    
+                    <button onclick="adoptPet(${pet.id})" class="w-full bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 transition duration-200">
+                        Adoptar (+${pet.type === 'cat' ? '250' : '100'} 🪙)
+                    </button>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function updateVetDisplay() {
+            const user = gameState.users[gameState.currentUser];
+            const sickPets = user.pets.filter(pet => pet.health < 80);
+            const sickContainer = document.getElementById('sickPetsList');
+            const noSickMessage = document.getElementById('noSickPets');
+            
+            if (sickPets.length === 0) {
+                sickContainer.innerHTML = '';
+                noSickMessage.classList.remove('hidden');
+                return;
+            }
+            
+            noSickMessage.classList.add('hidden');
+            sickContainer.innerHTML = sickPets.map(pet => `
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-3xl">${pet.emoji}</span>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">${pet.name}</h4>
+                                <p class="text-sm text-gray-600">Salud: ${pet.health}%</p>
+                            </div>
+                        </div>
+                        <button onclick="treatPet('${pet.id}')" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                            Tratar (50 🪙)
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateAdminDisplay() {
+            if (!gameState.users[gameState.currentUser].isAdmin) return;
+            
+            // Update breeds list
+            const breedsList = document.getElementById('breedsList');
+            breedsList.innerHTML = Object.entries(gameState.breeds).map(([type, breeds]) => `
+                <div class="p-3 bg-gray-50 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-2">${type === 'cat' ? 'Gatos' : 'Peces'}:</h4>
+                    <p class="text-sm text-gray-600">${breeds.join(', ')}</p>
+                </div>
+            `).join('');
+            
+            // Update shop items list
+            const shopItemsList = document.getElementById('shopItemsList');
+            shopItemsList.innerHTML = gameState.shopItems.map(item => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-xl">${item.emoji}</span>
+                        <span class="font-medium">${item.name}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-green-600 font-semibold">${item.price} 🪙</span>
+                        <button onclick="removeShopItem(${item.id})" class="text-red-500 hover:text-red-700">
+                            ❌
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Game Actions
+        function buyItem(itemId) {
+            const user = gameState.users[gameState.currentUser];
+            const item = gameState.shopItems.find(i => i.id === itemId);
+            
+            if (!item) return;
+            
+            if (user.coins < item.price) {
+                alert('No tienes suficientes monedas');
+                return;
+            }
+            
+            user.coins -= item.price;
+            user.inventory[item.name] = (user.inventory[item.name] || 0) + 1;
+            
+            updateDisplay();
+            updateInventoryDisplay();
+            saveGameData();
+            
+            alert(`¡Has comprado ${item.name}!`);
+        }
+
+        function adoptPet(petId) {
+            const user = gameState.users[gameState.currentUser];
+            const pet = gameState.availablePets.find(p => p.id === petId);
+            
+            if (!pet) return;
+            
+            // Check if user has space for fish
+            if (pet.type === 'fish') {
+                if (!user.aquariums || user.aquariums.length === 0) {
+                    alert('¡Necesitas instalar una pecera primero! Ve a Acciones Rápidas → Instalar Pecera.');
+                    return;
+                }
+                
+                // Check if there's space in any aquarium
+                const availableAquarium = user.aquariums.find(aq => {
+                    const fishInAquarium = user.pets.filter(p => p.aquariumId === aq.id).length;
+                    return fishInAquarium < aq.capacity;
+                });
+                
+                if (!availableAquarium) {
+                    alert('¡Todas tus peceras están llenas! Compra una pecera más grande o instala otra.');
+                    return;
+                }
+            }
+            
+            const reward = pet.type === 'cat' ? 250 : 100;
+            
+            // Add pet to user's collection
+            const newPet = {
+                ...pet,
+                id: Date.now().toString(),
+                adoptedAt: gameState.gameTime
+            };
+            
+            // If it's a fish, assign to an available aquarium
+            if (pet.type === 'fish') {
+                const availableAquarium = user.aquariums.find(aq => {
+                    const fishInAquarium = user.pets.filter(p => p.aquariumId === aq.id).length;
+                    return fishInAquarium < aq.capacity;
+                });
+                newPet.aquariumId = availableAquarium.id;
+            }
+            
+            user.pets.push(newPet);
+            user.coins += reward;
+            
+            // Remove from available pets
+            gameState.availablePets = gameState.availablePets.filter(p => p.id !== petId);
+            
+            updateDisplay();
+            updateShelterDisplay();
+            updatePetsDisplay();
+            saveGameData();
+            
+            alert(`¡Has adoptado a ${pet.name}! Recibes ${reward} monedas de recompensa.`);
+        }
+
+        function treatPet(petId) {
+            const user = gameState.users[gameState.currentUser];
+            
+            if (user.coins < 50) {
+                alert('No tienes suficientes monedas para el tratamiento');
+                return;
+            }
+            
+            const pet = user.pets.find(p => p.id === petId);
+            if (!pet) return;
+            
+            user.coins -= 50;
+            pet.health = Math.min(100, pet.health + 30);
+            
+            updateDisplay();
+            updateVetDisplay();
+            updatePetsDisplay();
+            
+            alert(`${pet.name} ha sido tratado y se siente mejor!`);
+        }
+
+        function takeTransport(line) {
+            const user = gameState.users[gameState.currentUser];
+            
+            if (user.coins < 15) {
+                alert('No tienes suficientes monedas para el transporte');
+                return;
+            }
+            
+            user.coins -= 15;
+            updateDisplay();
+            
+            const routes = {
+                'C1': 'Casa → Tienda → Veterinario → Casa',
+                '5A': 'Casa → Tienda → Casa',
+                '15C': 'Casa → Protectora → Tienda → Protectora → Casa',
+                '28': 'Casa → Veterinario → Casa'
+            };
+            
+            alert(`¡Viajando en la línea ${line}!\nRuta: ${routes[line]}`);
+        }
+
+        function addBreed() {
+            const type = document.getElementById('newPetType').value;
+            const breedName = document.getElementById('newBreedName').value.trim();
+            
+            if (!breedName) {
+                alert('Ingresa el nombre de la raza');
+                return;
+            }
+            
+            if (!gameState.breeds[type].includes(breedName)) {
+                gameState.breeds[type].push(breedName);
+                document.getElementById('newBreedName').value = '';
+                updateAdminDisplay();
+                alert(`Raza ${breedName} agregada exitosamente`);
+            } else {
+                alert('Esta raza ya existe');
+            }
+        }
+
+        function addShopItem() {
+            const name = document.getElementById('newItemName').value.trim();
+            const price = parseInt(document.getElementById('newItemPrice').value);
+            const category = document.getElementById('newItemCategory').value;
+            
+            if (!name || !price) {
+                alert('Completa todos los campos');
+                return;
+            }
+            
+            const emojis = {
+                food: '🥫',
+                toy: '🧸',
+                accessory: '🎀',
+                medicine: '💊'
+            };
+            
+            const newItem = {
+                id: Date.now(),
+                name: name,
+                price: price,
+                category: category,
+                emoji: emojis[category]
+            };
+            
+            gameState.shopItems.push(newItem);
+            
+            // Clear form
+            document.getElementById('newItemName').value = '';
+            document.getElementById('newItemPrice').value = '';
+            
+            updateAdminDisplay();
+            alert(`Producto ${name} agregado exitosamente`);
+        }
+
+        function removeShopItem(itemId) {
+            if (confirm('¿Estás seguro de eliminar este producto?')) {
+                gameState.shopItems = gameState.shopItems.filter(item => item.id !== itemId);
+                updateAdminDisplay();
+            }
+        }
+
+        function addRandomPetToShelter() {
+            const types = ['cat', 'fish'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            const breedData = gameState.breeds[type];
+            const breed = breedData[Math.floor(Math.random() * breedData.length)];
+            const gender = Math.random() < 0.5 ? 'male' : 'female';
+            const names = gameState.petNames[type][gender];
+            const name = names[Math.floor(Math.random() * names.length)];
+            const color = breed.colors[Math.floor(Math.random() * breed.colors.length)];
+            
+            const newPet = {
+                id: Date.now() + Math.random(),
+                name: name,
+                type: type,
+                breed: breed.name,
+                color: color,
+                gender: gender,
+                emoji: breed.emoji,
+                age: Math.round((Math.random() * 24 + 1) * 10) / 10, // 0.1 to 24 months
+                health: Math.round((Math.random() * 30 + 70) * 10) / 10, // 70-100%
+                happiness: Math.round((Math.random() * 40 + 60) * 10) / 10 // 60-100%
+            };
+            
+            gameState.availablePets.push(newPet);
+            saveGameData();
+        }
+
+        function setupAquarium() {
+            const user = gameState.users[gameState.currentUser];
+            
+            // Check available aquariums in inventory
+            const availableAquariums = gameState.shopItems.filter(item => 
+                item.category === 'aquarium' && user.inventory[item.name] > 0
+            );
+            
+            if (availableAquariums.length === 0) {
+                alert('¡No tienes peceras en tu inventario! Compra una en la tienda primero.');
+                return;
+            }
+            
+            // Show selection modal
+            const aquariumOptions = availableAquariums.map(aq => 
+                `<button onclick="installAquarium('${aq.name}')" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 mb-2">
+                    ${aq.emoji} ${aq.name} (Capacidad: ${aq.capacity} peces)
+                </button>`
+            ).join('');
+            
+            const modal = document.getElementById('petModal');
+            const content = document.getElementById('petModalContent');
+            
+            content.innerHTML = `
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">🏠 Instalar Pecera</h2>
+                    <p class="text-gray-600 mb-6">Selecciona qué pecera quieres instalar:</p>
+                    
+                    <div class="space-y-3">
+                        ${aquariumOptions}
+                    </div>
+                    
+                    <button onclick="closeModal()" class="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600 mt-4">
+                        Cancelar
+                    </button>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+
+        function installAquarium(aquariumName) {
+            const user = gameState.users[gameState.currentUser];
+            const aquariumItem = gameState.shopItems.find(item => item.name === aquariumName);
+            
+            if (!aquariumItem || !user.inventory[aquariumName] || user.inventory[aquariumName] <= 0) {
+                return;
+            }
+            
+            // Initialize aquariums array if it doesn't exist
+            if (!user.aquariums) {
+                user.aquariums = [];
+            }
+            
+            // Create new aquarium
+            const newAquarium = {
+                id: Date.now().toString(),
+                name: aquariumName,
+                emoji: aquariumItem.emoji,
+                capacity: aquariumItem.capacity,
+                installedAt: gameState.gameTime
+            };
+            
+            user.aquariums.push(newAquarium);
+            user.inventory[aquariumName]--;
+            
+            updateDisplay();
+            updatePetsDisplay();
+            updateInventoryDisplay();
+            saveGameData();
+            closeModal();
+            
+            alert(`¡Pecera ${aquariumName} instalada correctamente!`);
+        }
+
+        function removeAquarium(aquariumId) {
+            const user = gameState.users[gameState.currentUser];
+            const aquarium = user.aquariums.find(aq => aq.id === aquariumId);
+            
+            if (!aquarium) return;
+            
+            // Check if aquarium has fish
+            const fishInAquarium = user.pets.filter(pet => pet.aquariumId === aquariumId);
+            
+            if (fishInAquarium.length > 0) {
+                alert('¡No puedes quitar una pecera que tiene peces! Mueve los peces primero.');
+                return;
+            }
+            
+            if (confirm(`¿Estás seguro de quitar la ${aquarium.name}?`)) {
+                // Return aquarium to inventory
+                user.inventory[aquarium.name] = (user.inventory[aquarium.name] || 0) + 1;
+                
+                // Remove aquarium
+                user.aquariums = user.aquariums.filter(aq => aq.id !== aquariumId);
+                
+                updateDisplay();
+                updatePetsDisplay();
+                updateInventoryDisplay();
+                saveGameData();
+                
+                alert(`${aquarium.name} devuelta al inventario.`);
+            }
+        }
+
+        function addFishToAquarium(aquariumId) {
+            showSection('shelter');
+            alert('Ve a la protectora para adoptar peces. Se asignarán automáticamente a esta pecera si hay espacio.');
+        }
+
+        function feedAllPets() {
+            const user = gameState.users[gameState.currentUser];
+            
+            const cats = user.pets.filter(pet => pet.type === 'cat');
+            const fish = user.pets.filter(pet => pet.type === 'fish');
+            
+            const catFoodNeeded = cats.length;
+            const fishFoodNeeded = fish.length;
+            
+            const catFoodAvailable = user.inventory['Comida para gatos'] || 0;
+            const fishFoodAvailable = user.inventory['Comida para peces'] || 0;
+            
+            if (catFoodNeeded > catFoodAvailable || fishFoodNeeded > fishFoodAvailable) {
+                alert(`No tienes suficiente comida. Necesitas: ${catFoodNeeded} comida para gatos y ${fishFoodNeeded} comida para peces.`);
+                return;
+            }
+            
+            // Feed all pets
+            cats.forEach(pet => {
+                pet.health = Math.min(100, pet.health + 15);
+                pet.happiness = Math.min(100, pet.happiness + 10);
+            });
+            
+            fish.forEach(pet => {
+                pet.health = Math.min(100, pet.health + 15);
+                pet.happiness = Math.min(100, pet.happiness + 10);
+            });
+            
+            // Consume food
+            user.inventory['Comida para gatos'] -= catFoodNeeded;
+            user.inventory['Comida para peces'] -= fishFoodNeeded;
+            
+            updateDisplay();
+            updatePetsDisplay();
+            updateInventoryDisplay();
+            saveGameData();
+            
+            alert(`¡Todas las mascotas han sido alimentadas! (${cats.length} gatos, ${fish.length} peces)`);
+        }
+
+        function showPetDetails(petId) {
+            const user = gameState.users[gameState.currentUser];
+            const pet = user.pets.find(p => p.id === petId);
+            
+            if (!pet) return;
+            
+            const modal = document.getElementById('petModal');
+            const content = document.getElementById('petModalContent');
+            
+            const health = Math.round(pet.health * 10) / 10;
+            const happiness = Math.round(pet.happiness * 10) / 10;
+            const age = Math.round(pet.age * 10) / 10;
+            
+            // Check available collars
+            const availableCollars = gameState.shopItems.filter(item => 
+                item.category === 'collar' && user.inventory[item.name] > 0
+            );
+            
+            // Check available medicines
+            const availableMedicines = gameState.shopItems.filter(item => 
+                item.category === 'medicine' && user.inventory[item.name] > 0
+            );
+            
+            const breedData = gameState.breeds[pet.type].find(b => b.name === pet.breed);
+            
+            content.innerHTML = `
+                <div class="text-center">
+                    <div class="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden bg-gray-200">
+                        <img src="${breedData?.photo || ''}" alt="${pet.name}" class="w-full h-full object-cover" 
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div class="text-8xl pt-8 hidden">${pet.emoji}</div>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">${pet.name}</h2>
+                    <p class="text-gray-600 mb-1">${pet.gender === 'male' ? '♂️ Macho' : '♀️ Hembra'} ${pet.breed}</p>
+                    <p class="text-gray-500 mb-4">${pet.color} • ${age} ${age === 1 ? 'mes' : 'meses'}</p>
+                    ${pet.collar ? `<p class="text-purple-600 text-sm mb-4">🎀 Lleva: ${pet.collar}</p>` : ''}
+                    ${pet.type === 'fish' && pet.aquariumId ? `<p class="text-blue-600 text-sm mb-4">🏠 En pecera</p>` : ''}
+                    
+                    <div class="space-y-4 mb-6">
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">Salud:</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-32 bg-gray-200 rounded-full h-3">
+                                    <div class="bg-${health > 70 ? 'green' : health > 40 ? 'yellow' : 'red'}-500 h-3 rounded-full" style="width: ${health}%"></div>
+                                </div>
+                                <span class="font-bold">${health}%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">Felicidad:</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-32 bg-gray-200 rounded-full h-3">
+                                    <div class="bg-${happiness > 70 ? 'green' : happiness > 40 ? 'yellow' : 'red'}-500 h-3 rounded-full" style="width: ${happiness}%"></div>
+                                </div>
+                                <span class="font-bold">${happiness}%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <button onclick="feedPet('${pet.id}')" class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600">
+                            🥫 Alimentar
+                        </button>
+                        <button onclick="playWithPet('${pet.id}')" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
+                            🎾 Jugar
+                        </button>
+                    </div>
+                    
+                    ${pet.type === 'cat' && availableCollars.length > 0 ? `
+                        <div class="mb-4">
+                            <h4 class="font-medium mb-2">Poner Collar:</h4>
+                            <div class="grid grid-cols-2 gap-2">
+                                ${availableCollars.map(collar => `
+                                    <button onclick="putCollar('${pet.id}', '${collar.name}')" class="bg-purple-500 text-white py-1 px-2 rounded text-sm hover:bg-purple-600">
+                                        ${collar.emoji} ${collar.name}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${availableMedicines.length > 0 ? `
+                        <div class="mb-4">
+                            <h4 class="font-medium mb-2">Tratar en Casa:</h4>
+                            <div class="grid grid-cols-2 gap-2">
+                                ${availableMedicines.filter(medicine => {
+                                    // Cats can use all medicines
+                                    if (pet.type === 'cat') return true;
+                                    // Fish can only use vitamins and some specific treatments
+                                    if (pet.type === 'fish') return medicine.name === 'Vitaminas' || medicine.name === 'Antiparasitario';
+                                    return false;
+                                }).map(medicine => `
+                                    <button onclick="treatPetAtHome('${pet.id}', '${medicine.name}')" class="bg-red-500 text-white py-1 px-2 rounded text-sm hover:bg-red-600">
+                                        ${medicine.emoji} ${medicine.name}
+                                    </button>
+                                `).join('')}
+                            </div>
+                            ${pet.type === 'cat' ? '<p class="text-xs text-gray-500 mt-1">🐱 Los gatos pueden usar todas las medicinas</p>' : ''}
+                            ${pet.type === 'fish' ? '<p class="text-xs text-gray-500 mt-1">🐠 Los peces solo pueden usar vitaminas y antiparasitarios</p>' : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <button onclick="closeModal()" class="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        Cerrar
+                    </button>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+
+        function feedPet(petId) {
+            const user = gameState.users[gameState.currentUser];
+            const pet = user.pets.find(p => p.id === petId);
+            
+            if (!pet) return;
+            
+            const foodType = pet.type === 'cat' ? 'Comida para gatos' : 'Comida para peces';
+            
+            if (!user.inventory[foodType] || user.inventory[foodType] <= 0) {
+                alert(`No tienes ${foodType.toLowerCase()}`);
+                return;
+            }
+            
+            user.inventory[foodType]--;
+            pet.health = Math.min(100, pet.health + 15);
+            pet.happiness = Math.min(100, pet.happiness + 10);
+            
+            updateDisplay();
+            updatePetsDisplay();
+            updateInventoryDisplay();
+            closeModal();
+            
+            alert(`${pet.name} ha comido y se siente mejor!`);
+        }
+
+        function playWithPet(petId) {
+            const user = gameState.users[gameState.currentUser];
+            const pet = user.pets.find(p => p.id === petId);
+            
+            if (!pet) return;
+            
+            pet.happiness = Math.min(100, pet.happiness + 20);
+            pet.health = Math.max(0, pet.health - 5); // Playing uses some energy
+            
+            updateDisplay();
+            updatePetsDisplay();
+            saveGameData();
+            closeModal();
+            
+            alert(`¡${pet.name} se divirtió mucho jugando contigo!`);
+        }
+
+        function putCollar(petId, collarName) {
+            const user = gameState.users[gameState.currentUser];
+            const pet = user.pets.find(p => p.id === petId);
+            
+            if (!pet || !user.inventory[collarName] || user.inventory[collarName] <= 0) return;
+            
+            // Remove old collar if exists
+            if (pet.collar) {
+                user.inventory[pet.collar] = (user.inventory[pet.collar] || 0) + 1;
+            }
+            
+            // Put new collar
+            user.inventory[collarName]--;
+            pet.collar = collarName;
+            pet.happiness = Math.min(100, pet.happiness + 10);
+            
+            updateDisplay();
+            updatePetsDisplay();
+            updateInventoryDisplay();
+            saveGameData();
+            closeModal();
+            
+            alert(`¡${pet.name} ahora lleva ${collarName}!`);
+        }
+
+        function treatPetAtHome(petId, medicineName) {
+            const user = gameState.users[gameState.currentUser];
+            const pet = user.pets.find(p => p.id === petId);
+            
+            if (!pet || !user.inventory[medicineName] || user.inventory[medicineName] <= 0) return;
+            
+            user.inventory[medicineName]--;
+            
+            // Different medicines have different effects
+            let healthBoost = 15;
+            if (medicineName === 'Vacuna completa') healthBoost = 25;
+            if (medicineName === 'Antibiótico') healthBoost = 30;
+            if (medicineName === 'Vitaminas') healthBoost = 20;
+            if (medicineName === 'Antiparasitario') healthBoost = 18;
+            
+            pet.health = Math.min(100, pet.health + healthBoost);
+            
+            updateDisplay();
+            updatePetsDisplay();
+            updateInventoryDisplay();
+            saveGameData();
+            closeModal();
+            
+            alert(`¡${pet.name} ha sido tratado con ${medicineName} y se siente mejor!`);
+        }
+
+        function closeModal() {
+            document.getElementById('petModal').classList.add('hidden');
+        }
+
+        // Game Time System
+        function startGameTime() {
+            setInterval(() => {
+                // Advance time every 10 seconds (1 game hour)
+                advanceGameTime();
+                updatePetStats();
+                updateDisplay();
+                
+                // Add new pets to shelter occasionally
+                if (Math.random() < 0.3) { // 30% chance every hour
+                    addRandomPetToShelter();
+                }
+                
+                saveGameData();
+            }, 10000); // 10 seconds = 1 game hour
+        }
+
+        function advanceGameTime() {
+            gameState.gameTime.hour++;
+            
+            if (gameState.gameTime.hour > 23) {
+                gameState.gameTime.hour = 0;
+                gameState.gameTime.day++;
+                
+                if (gameState.gameTime.day > 30) { // 30 days = 1 month
+                    gameState.gameTime.day = 1;
+                    gameState.gameTime.month++;
+                    
+                    if (gameState.gameTime.month > 12) {
+                        gameState.gameTime.month = 1;
+                        gameState.gameTime.year++;
+                    }
+                }
+            }
+        }
+
+        function updatePetStats() {
+            // Update all pets' stats over time
+            Object.values(gameState.users).forEach(user => {
+                user.pets.forEach(pet => {
+                    // Pets get hungrier and less happy over time
+                    pet.health = Math.max(0, pet.health - Math.random() * 5);
+                    pet.happiness = Math.max(0, pet.happiness - Math.random() * 8);
+                    
+                    // Age pets
+                    pet.age += 0.2; // Approximate aging
+                    
+                    // Random events
+                    if (Math.random() < 0.1) { // 10% chance
+                        if (Math.random() < 0.5) {
+                            pet.health = Math.max(20, pet.health - 20);
+                            console.log(`${pet.name} got sick!`);
+                        }
+                    }
+                });
+            });
+            
+            if (gameState.currentUser) {
+                updatePetsDisplay();
+            }
+        }
+
+        // Click outside modal to close
+        document.getElementById('petModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        document.getElementById('createAccountModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideCreateAccountModal();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9bd6bed4a2fc33db',t:'MTc2ODMyNjcyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
