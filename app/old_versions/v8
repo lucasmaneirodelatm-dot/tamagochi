@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gatos y Peces - Juego Virtual</title>
+    <title>Gatos y Peces - Juego Virtual - GAME GM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
@@ -22,7 +22,7 @@
         <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">🐱 Gatos y Peces 🐠</h1>
-                <p class="text-gray-600">Perros próximamente</p>
+                <p class="text-gray-600">Mejor Versión - V 8.0</p>
             </div>
             
             <form id="loginForm" class="space-y-6">
@@ -383,24 +383,26 @@
             availablePets: [],
             breeds: {
                 cat: [
-                    { name: 'Siamés', emoji: '🐱', colors: ['crema', 'chocolate'], photo: 'https://images.unsplash.com/photo-1513245543132-31f507417b26?w=300&h=300&fit=crop' },
-                    { name: 'Persa', emoji: '😺', colors: ['blanco', 'gris', 'naranja'], photo: 'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=300&h=300&fit=crop' },
-                    { name: 'Maine Coon', emoji: '🦁', colors: ['marrón', 'gris'], photo: 'https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=300&h=300&fit=crop' },
-                    { name: 'Británico', emoji: '😸', colors: ['gris', 'azul'], photo: 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=300&h=300&fit=crop' },
-                    { name: 'Bengalí', emoji: '🐅', colors: ['dorado', 'manchado'], photo: 'https://images.unsplash.com/photo-1606214174585-fe31582cd22c?w=300&h=300&fit=crop' },
-                    { name: 'Ragdoll', emoji: '😻', colors: ['crema', 'azul'], photo: 'https://images.unsplash.com/photo-1571566882372-1598d88abd90?w=300&h=300&fit=crop' },
-                    { name: 'Sphynx', emoji: '🙀', colors: ['rosa', 'gris'], photo: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=300&h=300&fit=crop' },
-                    { name: 'Abisinio', emoji: '😾', colors: ['canela', 'rojizo'], photo: 'https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=300&h=300&fit=crop' }
+                    { name: 'Siamés', emoji: '🐱', colors: ['blanco', 'chocolate'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gato%20009.png' },
+                    { name: 'Persa', emoji: '😺', colors: ['blanco', 'naranja'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gato%20de%20cualquier%20recibiendo%20caricias.jpg' },
+                    { name: 'Maine Coon', emoji: '🦁', colors: ['marrón', 'gris'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gato%20escondido%20(3).jpg' },
+                    { name: 'Británico', emoji: '😸', colors: ['gris'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gato%20008.png' },
+                    { name: 'Bengalí', emoji: '🐅', colors: ['dorado', 'manchado'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gato%20recien%20nacido%20muy%20adorable%20(1).jpg' },
+                    { name: 'Ragdoll', emoji: '😻', colors: ['blanco', 'gris'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gatos%20de%20diferentes%20colores%20(3).jpg' },
+                    { name: 'Sphynx', emoji: '🙀', colors: ['rosa', 'gris'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gato%20007.png' },
+                    { name: 'Negro', emoji: '⚫', colors: ['negro'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/photo-1595433707802-6b2626ef1c91.jpg' },
+                    { name: 'Atigrado', emoji: '🐅', colors: ['negro', 'gris'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gato%20007.png' },
+                    { name: 'Abisinio', emoji: '😾', colors: ['canela', 'rojizo'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gato%20002.png' }
                 ],
                 fish: [
-                    { name: 'Goldfish', emoji: '🐠', colors: ['dorado', 'naranja'], photo: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&h=300&fit=crop' },
-                    { name: 'Betta', emoji: '🐟', colors: ['azul', 'rojo', 'morado'], photo: 'https://images.unsplash.com/photo-1520637836862-4d197d17c93a?w=300&h=300&fit=crop' },
-                    { name: 'Guppy', emoji: '🟠', colors: ['multicolor', 'azul'], photo: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=300&h=300&fit=crop' },
-                    { name: 'Tetra', emoji: '🔵', colors: ['neón', 'plateado'], photo: 'https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=300&h=300&fit=crop' },
-                    { name: 'Ángel', emoji: '🔶', colors: ['plateado', 'rayado'], photo: 'https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=300&h=300&fit=crop' },
-                    { name: 'Molly', emoji: '⚫', colors: ['negro', 'plateado'], photo: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=300&h=300&fit=crop' },
-                    { name: 'Platy', emoji: '🟡', colors: ['amarillo', 'rojo'], photo: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=300&fit=crop' },
-                    { name: 'Corydora', emoji: '🟤', colors: ['marrón', 'moteado'], photo: 'https://images.unsplash.com/photo-1571752726703-5e7d1f6a986d?w=300&h=300&fit=crop' }
+                    { name: 'Goldfish', emoji: '🐠', colors: ['dorado', 'azul'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/fishes/Pecera%20con%20varios%20peces%20cometa%20de%20diferente%20color%20(3).jpg' },
+                    { name: 'Betta', emoji: '🐟', colors: ['blanco', 'naranja', 'negro'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/fishes/a63210245b77e940c02d12256d5258a3.jpg' },
+                    { name: 'Guppy', emoji: '🟠', colors: ['rayado', 'gris'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/fishes/Cebras(3).jpg' },
+                    { name: 'Tetra', emoji: '🔵', colors: ['rayado', 'gris'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/fishes/Cebras(1).jpg' },
+                    { name: 'Nemo', emoji: '🔶', colors: ['naranja', 'blanco'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/fishes/photo-1535591273668-578e31182c4f.jpg' },
+                    { name: 'Cometa Rojo', emoji: '🐟', colors: ['rojo'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/fishes/cometa.webp' },
+                    { name: 'Cometa Amarillo', emoji: '🟡', colors: ['amarillo'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/fishes/images%20(4).jpeg' },
+                    { name: 'Corydora', emoji: '🟤', colors: ['rayado', 'amarillo'], photo: 'https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/fishes/images%20(2).jpeg' }
                 ]
             },
             petNames: {
