@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gatos y Peces v21 - Juego Virtual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .pet-card { transition: all 0.3s ease; }
+        .pet-card:hover { transform: translateY(-5px); }
+        .modal { backdrop-filter: blur(10px); }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .shop-item { transition: all 0.2s ease; }
+        .shop-item:hover { transform: scale(1.05); }
+        .baby-pet { animation: bounce 2s infinite; }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen gradient-bg flex items-center justify-center">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">🐱 Gatos y Peces v21 🐠</h1>
+                <p class="text-gray-600">Perros próximamente</p>
+                <p class="text-sm text-blue-600 mt-2">✨ Nuevo: Sistema de camadas y descendencia</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+                    <input type="text" id="username" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ingresa tu usuario">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                    <input type="password" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="GAME-****">
+                </div>
+                
+                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-200">
+                    Iniciar Sesión
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                    <p class="text-sm text-blue-700 font-medium mb-2">💡 Acceso rápido:</p>
+                    <p class="text-xs text-blue-600">Puedes usar cualquier usuario y contraseña para crear una cuenta automáticamente</p>
+                    <p class="text-xs text-blue-600 mt-1">Ejemplo: usuario "jugador1" con contraseña "GAME-123"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Game Interface -->
+    <div id="gameScreen" class="hidden">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-4">
+                        <h1 class="text-2xl font-bold text-gray-800">🐱 Gatos y Peces v21</h1>
+                        <span id="userWelcome" class="text-gray-600"></span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-6">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-yellow-500">🪙</span>
+                            <span id="userCoins" class="font-semibold">1000</span>
+                            <span class="text-sm text-gray-600">Monedas</span>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <button onclick="showSection('home')" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Casa</button>
+                            <button onclick="showSection('shop')" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Tienda</button>
+                            <button onclick="showSection('shelter')" class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">Protectora</button>
+                            <button onclick="showSection('vet')" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Veterinario</button>
+                            <button onclick="showSection('work')" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Trabajos</button>
+                        </div>
+                        
+                        <button onclick="logout()" class="text-gray-500 hover:text-gray-700">Salir</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Home Section -->
+        <div id="homeSection" class="max-w-7xl mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Pets Display -->
+                <div class="lg:col-span-2">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">🐱 Mis Mascotas</h2>
+                    
+                    <div id="petsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Pets will be dynamically added here -->
+                    </div>
+                    
+                    <div id="noPetsMessage" class="text-center py-8 bg-white rounded-xl shadow-sm">
+                        <div class="text-4xl mb-2">🐱</div>
+                        <p class="text-gray-500 text-sm">No tienes mascotas</p>
+                        <button onclick="showSection('shelter')" class="mt-4 bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600">
+                            Ir a Protectora
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Inventory -->
+                <div class="space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Inventario</h3>
+                        <div id="inventoryList" class="space-y-3">
+                            <!-- Inventory items will be added here -->
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Acciones Rápidas</h3>
+                        <div class="space-y-3">
+                            <button onclick="feedAllPets()" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 text-sm">
+                                🥫 Alimentar Todos
+                            </button>
+                            <button onclick="showSection('shelter')" class="w-full bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 text-sm">
+                                🏠 Adoptar Mascota
+                            </button>
+                            <button onclick="showSection('shop')" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 text-sm">
+                                🛒 Ir a Tienda
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shop Section -->
+        <div id="shopSection" class="hidden max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">🛒 Tienda de Mascotas</h2>
+            
+            <div id="shopContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Shop items will be dynamically added -->
+            </div>
+        </div>
+
+        <!-- Shelter Section -->
+        <div id="shelterSection" class="hidden max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">🏠 Protectora de Animales</h2>
+            
+            <div id="shelterContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Available pets for adoption -->
+            </div>
+        </div>
+
+        <!-- Veterinarian Section -->
+        <div id="vetSection" class="hidden max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">🏥 Veterinario Dr. Pérez</h2>
+            
+            <div class="bg-white rounded-xl shadow-sm p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="text-6xl mb-4">👨‍⚕️</div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2">Dr. Pérez - Clínica Veterinaria</h3>
+                    <p class="text-gray-600">Tratamiento: 50 monedas por mascota</p>
+                </div>
+                
+                <div id="sickPetsList" class="space-y-4">
+                    <!-- Sick pets will appear here -->
+                </div>
+                
+                <div id="noSickPets" class="text-center py-8">
+                    <p class="text-gray-500">¡Todas tus mascotas están sanas! 🎉</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Work Section -->
+        <div id="workSection" class="hidden max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">💼 Centro de Trabajos</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Available Jobs -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Trabajos Disponibles</h3>
+                    <div class="space-y-3">
+                        <button onclick="startJob('petCare')" class="w-full bg-blue-500 text-white py-3 px-4 rounded-lg hover:bg-blue-600 text-left">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-semibold">🐾 Cuidador de Mascotas</div>
+                                    <div class="text-sm opacity-90">100 monedas • Instantáneo</div>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button onclick="startJob('shopKeeper')" class="w-full bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 text-left">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-semibold">🏪 Vendedor de Tienda</div>
+                                    <div class="text-sm opacity-90">80 monedas • Instantáneo</div>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button onclick="startJob('delivery')" class="w-full bg-purple-500 text-white py-3 px-4 rounded-lg hover:bg-purple-600 text-left">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-semibold">🚚 Repartidor</div>
+                                    <div class="text-sm opacity-90">120 monedas • Instantáneo</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Breeding Section -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">💕 Centro de Cría</h3>
+                    <div class="space-y-4">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🐱</div>
+                            <h4 class="font-semibold mb-2">Cría de Gatos</h4>
+                            <p class="text-sm text-gray-600 mb-4">Costo: 200 monedas<br>Resultado: 1-4 gatitos</p>
+                            <button onclick="startBreeding('cat')" class="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600">
+                                Iniciar Cría
+                            </button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🐠</div>
+                            <h4 class="font-semibold mb-2">Cría de Peces</h4>
+                            <p class="text-sm text-gray-600 mb-4">Costo: 100 monedas<br>Resultado: 3-8 alevines</p>
+                            <button onclick="startBreeding('fish')" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">
+                                Iniciar Cría
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pet Details Modal -->
+    <div id="petModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+            <div id="petModalContent">
+                <!-- Pet details will be shown here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            currentUser: null,
+            users: {},
+            shopItems: [
+                { id: 1, name: 'Comida para gatos', price: 25, category: 'food', emoji: '🥫' },
+                { id: 2, name: 'Comida para peces', price: 15, category: 'food', emoji: '🐟' },
+                { id: 3, name: 'Juguete ratón', price: 30, category: 'toy', emoji: '🐭' },
+                { id: 4, name: 'Collar básico', price: 35, category: 'collar', emoji: '🔗' },
+                { id: 5, name: 'Collar elegante', price: 65, category: 'collar', emoji: '🎀' },
+                { id: 6, name: 'Medicina básica', price: 40, category: 'medicine', emoji: '💊' },
+                { id: 7, name: 'Vitaminas', price: 25, category: 'medicine', emoji: '🧪' }
+            ],
+            availablePets: [],
+            breeds: {
+                cat: ['Siamés', 'Persa', 'Maine Coon', 'Británico', 'Bengalí'],
+                fish: ['Goldfish', 'Nemo', 'Cebra', 'Ángel']
+            },
+            petNames: {
+                cat: {
+                    male: ['Simba', 'Garfield', 'Félix', 'Shadow', 'Tiger'],
+                    female: ['Luna', 'Nala', 'Bella', 'Mittens', 'Coco']
+                },
+                fish: {
+                    male: ['Nemo', 'Finn', 'Neptuno', 'Azul', 'Dorado'],
+                    female: ['Dory', 'Marina', 'Perla', 'Estrella', 'Sirena']
+                }
+            }
+        };
+
+        // Initialize game
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGameData();
+            initializeGame();
+            generateInitialPets();
+        });
+
+        function loadGameData() {
+            const savedData = localStorage.getItem('catsFishGameData');
+            if (savedData) {
+                const parsed = JSON.parse(savedData);
+                gameState.users = parsed.users || {};
+                gameState.availablePets = parsed.availablePets || [];
+            }
+        }
+
+        function saveGameData() {
+            const dataToSave = {
+                users: gameState.users,
+                availablePets: gameState.availablePets
+            };
+            localStorage.setItem('catsFishGameData', JSON.stringify(dataToSave));
+        }
+
+        function initializeGame() {
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        }
+
+        function generateInitialPets() {
+            if (gameState.availablePets.length < 3) {
+                for (let i = 0; i < 5; i++) {
+                    addRandomPetToShelter();
+                }
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+
+            // Create new account automatically if user doesn't exist
+            if (!gameState.users[username]) {
+                gameState.users[username] = {
+                    password: password,
+                    coins: 1000,
+                    pets: [],
+                    inventory: {
+                        'Comida para gatos': 3,
+                        'Comida para peces': 3,
+                        'Medicina básica': 2
+                    }
+                };
+            }
+
+            // Login user
+            const user = gameState.users[username];
+            
+            if (user && user.password === password) {
+                gameState.currentUser = username;
+                
+                // Hide login screen and show game
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('gameScreen').style.display = 'block';
+                
+                // Clear form
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                
+                // Update displays
+                updateDisplay();
+                showSection('home');
+                saveGameData();
+                
+                alert(`¡Bienvenido ${username}!`);
+            } else {
+                alert('Error en el login. Verifica tu usuario y contraseña.');
+            }
+        }
+
+        function logout() {
+            gameState.currentUser = null;
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('gameScreen').style.display = 'none';
+        }
+
+        function showSection(section) {
+            // Hide all sections
+            const sections = ['home', 'shop', 'shelter', 'vet', 'work'];
+            sections.forEach(s => {
+                const element = document.getElementById(s + 'Section');
+                if (element) {
+                    element.classList.add('hidden');
+                }
+            });
+            
+            // Show selected section
+            const targetSection = document.getElementById(section + 'Section');
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+            
+            // Update section content
+            switch(section) {
+                case 'home':
+                    updatePetsDisplay();
+                    updateInventoryDisplay();
+                    break;
+                case 'shop':
+                    updateShopDisplay();
+                    break;
+                case 'shelter':
+                    updateShelterDisplay();
+                    break;
+                case 'vet':
+                    updateVetDisplay();
+                    break;
+            }
+        }
+
+        function updateDisplay() {
+            if (!gameState.currentUser) return;
+            
+            const user = gameState.users[gameState.currentUser];
+            document.getElementById('userWelcome').textContent = `Bienvenido, ${gameState.currentUser}`;
+            document.getElementById('userCoins').textContent = user.coins;
+        }
+
+        function updatePetsDisplay() {
+            const user = gameState.users[gameState.currentUser];
+            const container = document.getElementById('petsContainer');
+            const noMessage = document.getElementById('noPetsMessage');
+            
+            if (!user.pets || user.pets.length === 0) {
+                container.innerHTML = '';
+                noMessage.classList.remove('hidden');
+                return;
+            }
+            
+            noMessage.classList.add('hidden');
+            container.innerHTML = user.pets.map(pet => {
+                const health = Math.round(pet.health);
+                const happiness = Math.round(pet.happiness);
+                
+                return `
+                <div class="pet-card bg-white rounded-xl shadow-sm p-4 cursor-pointer" onclick="showPetDetails('${pet.id}')">
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">${pet.emoji}</div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">${pet.name}</h3>
+                        <p class="text-xs text-gray-600 mb-1">${pet.gender === 'male' ? '♂️' : '♀️'} ${pet.breed}</p>
+                        <p class="text-xs text-gray-500 mb-2">${pet.color}</p>
+                        ${pet.collar ? `<p class="text-purple-600 text-xs mb-2">🎀 ${pet.collar}</p>` : ''}
+                        
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between text-xs">
+                                <span>Salud:</span>
+                                <span class="${health > 70 ? 'text-green-600' : health > 40 ? 'text-yellow-600' : 'text-red-600'}">${health}%</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs">
+                                <span>Felicidad:</span>
+                                <span class="${happiness > 70 ? 'text-green-600' : happiness > 40 ? 'text-yellow-600' : 'text-red-600'}">${happiness}%</span>
+                            </div>
+                        </div>
+                        
+                        ${pet.isBaby ? `
+                            <div class="mt-2 p-2 bg-yellow-50 rounded border border-yellow-200">
+                                <p class="text-yellow-600 text-xs font-medium baby-pet">🍼 Bebé</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function updateInventoryDisplay() {
+            const user = gameState.users[gameState.currentUser];
+            const container = document.getElementById('inventoryList');
+            
+            const items = Object.entries(user.inventory).filter(([name, quantity]) => quantity > 0);
+            
+            if (items.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center">Inventario vacío</p>';
+                return;
+            }
+            
+            container.innerHTML = items.map(([name, quantity]) => {
+                const item = gameState.shopItems.find(i => i.name === name);
+                const emoji = item ? item.emoji : '📦';
+                
+                return `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl">${emoji}</span>
+                            <span class="font-medium text-gray-800">${name}</span>
+                        </div>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-medium">${quantity}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateShopDisplay() {
+            const container = document.getElementById('shopContainer');
+            
+            container.innerHTML = gameState.shopItems.map(item => `
+                <div class="shop-item bg-white rounded-xl shadow-sm p-6 text-center">
+                    <div class="text-4xl mb-4">${item.emoji}</div>
+                    <h3 class="font-semibold text-gray-800 mb-2">${item.name}</h3>
+                    <p class="text-2xl font-bold text-green-600 mb-4">${item.price} 🪙</p>
+                    <button onclick="buyItem(${item.id})" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200">
+                        Comprar
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function updateShelterDisplay() {
+            const container = document.getElementById('shelterContainer');
+            
+            if (gameState.availablePets.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="text-6xl mb-4">🏠</div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No hay mascotas disponibles</h3>
+                        <p class="text-gray-500">Vuelve más tarde</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = gameState.availablePets.map(pet => {
+                const health = Math.round(pet.health);
+                const happiness = Math.round(pet.happiness);
+                
+                return `
+                <div class="bg-white rounded-xl shadow-sm p-6 text-center">
+                    <div class="text-6xl mb-4">${pet.emoji}</div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">${pet.name}</h3>
+                    <p class="text-gray-600 mb-1">${pet.gender === 'male' ? '♂️' : '♀️'} ${pet.breed}</p>
+                    <p class="text-gray-500 mb-4">${pet.color}</p>
+                    
+                    <div class="mb-4 space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span>Salud:</span>
+                            <span class="${health > 70 ? 'text-green-600' : health > 40 ? 'text-yellow-600' : 'text-red-600'}">${health}%</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span>Felicidad:</span>
+                            <span class="${happiness > 70 ? 'text-green-600' : happiness > 40 ? 'text-yellow-600' : 'text-red-600'}">${happiness}%</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="adoptPet(${pet.id})" class="w-full bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 transition duration-200">
+                        Adoptar (+200 🪙)
+                    </button>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function updateVetDisplay() {
+            const user = gameState.users[gameState.currentUser];
+            const sickPets = user.pets.filter(pet => pet.health < 80);
+            const sickContainer = document.getElementById('sickPetsList');
+            const noSickMessage = document.getElementById('noSickPets');
+            
+            if (sickPets.length === 0) {
+                sickContainer.innerHTML = '';
+                noSickMessage.classList.remove('hidden');
+                return;
+            }
+            
+            noSickMessage.classList.add('hidden');
+            sickContainer.innerHTML = sickPets.map(pet => `
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-3xl">${pet.emoji}</span>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">${pet.name}</h4>
+                                <p class="text-sm text-gray-600">Salud: ${Math.round(pet.health)}%</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg font-bold text-red-600 mb-2">50 🪙</p>
+                            <button onclick="treatPet('${pet.id}')" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                                Tratar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Game Actions
+        function buyItem(itemId) {
+            const user = gameState.users[gameState.currentUser];
+            const item = gameState.shopItems.find(i => i.id === itemId);
+            
+            if (!item) return;
+            
+            if (user.coins < item.price) {
+                alert('No tienes suficientes monedas');
+                return;
+            }
+            
+            user.coins -= item.price;
+            user.inventory[item.name] = (user.inventory[item.name] || 0) + 1;
+            
+            updateDisplay();
+            updateInventoryDisplay();
+            saveGameData();
+            
+            alert(`¡Has comprado ${item.name}!`);
+        }
+
+        function adoptPet(petId) {
+            const user = gameState.users[gameState.currentUser];
+            const pet = gameState.availablePets.find(p => p.id === petId);
+            
+            if (!pet) return;
+            
+            // Add pet to user's collection
+            const newPet = {
+                ...pet,
+                id: Date.now().toString()
+            };
+            
+            user.pets.push(newPet);
+            user.coins += 200; // Reward for adoption
+            
+            // Remove from available pets
+            gameState.availablePets = gameState.availablePets.filter(p => p.id !== petId);
+            
+            updateDisplay();
+            updateShelterDisplay();
+            updatePetsDisplay();
+            saveGameData();
+            
+            alert(`¡Has adoptado a ${pet.name}! Recibes 200 monedas de recompensa.`);
+        }
+
+        function treatPet(petId) {
+            const user = gameState.users[gameState.currentUser];
+            const pet = user.pets.find(p => p.id === petId);
+            
+            if (!pet) return;
+            
+            if (user.coins < 50) {
+                alert('No tienes suficientes monedas para el tratamiento');
+                return;
+            }
+            
+            user.coins -= 50;
+            pet.health = Math.min(100, pet.health + 40);
+            
+            updateDisplay();
+            updateVetDisplay();
+            updatePetsDisplay();
+            saveGameData();
+            
+            alert(`${pet.name} ha sido tratado y se siente mucho mejor!`);
+        }
+
+        function feedAllPets() {
+            const user = gameState.users[gameState.currentUser];
+            
+            if (!user.pets || user.pets.length === 0) {
+                alert('No tienes mascotas para alimentar');
+                return;
+            }
+            
+            const catFood = user.inventory['Comida para gatos'] || 0;
+            const fishFood = user.inventory['Comida para peces'] || 0;
+            
+            const cats = user.pets.filter(pet => pet.type === 'cat');
+            const fish = user.pets.filter(pet => pet.type === 'fish');
+            
+            let fedCats = 0;
+            let fedFish = 0;
+            
+            // Feed cats
+            if (cats.length > 0 && catFood > 0) {
+                const toFeed = Math.min(cats.length, catFood);
+                for (let i = 0; i < toFeed; i++) {
+                    cats[i].health = Math.min(100, cats[i].health + 15);
+                    cats[i].happiness = Math.min(100, cats[i].happiness + 20);
+                }
+                user.inventory['Comida para gatos'] -= toFeed;
+                fedCats = toFeed;
+            }
+            
+            // Feed fish
+            if (fish.length > 0 && fishFood > 0) {
+                const toFeed = Math.min(fish.length, fishFood);
+                for (let i = 0; i < toFeed; i++) {
+                    fish[i].health = Math.min(100, fish[i].health + 15);
+                    fish[i].happiness = Math.min(100, fish[i].happiness + 20);
+                }
+                user.inventory['Comida para peces'] -= toFeed;
+                fedFish = toFeed;
+            }
+            
+            updateDisplay();
+            updatePetsDisplay();
+            updateInventoryDisplay();
+            saveGameData();
+            
+            let message = '¡Mascotas alimentadas!\n';
+            if (fedCats > 0) message += `${fedCats} gatos alimentados\n`;
+            if (fedFish > 0) message += `${fedFish} peces alimentados\n`;
+            if (fedCats === 0 && fedFish === 0) message = 'No tienes comida suficiente';
+            
+            alert(message);
+        }
+
+        function startJob(jobType) {
+            const user = gameState.users[gameState.currentUser];
+            let reward = 0;
+            
+            switch(jobType) {
+                case 'petCare':
+                    reward = 100;
+                    break;
+                case 'shopKeeper':
+                    reward = 80;
+                    break;
+                case 'delivery':
+                    reward = 120;
+                    break;
+            }
+            
+            user.coins += reward;
+            updateDisplay();
+            saveGameData();
+            
+            alert(`¡Trabajo completado! Has ganado ${reward} monedas.`);
+        }
+
+        function startBreeding(type) {
+            const user = gameState.users[gameState.currentUser];
+            const cost = type === 'cat' ? 200 : 100;
+            
+            if (user.coins < cost) {
+                alert(`No tienes suficientes monedas (${cost} 🪙)`);
+                return;
+            }
+            
+            // Check if user has pets of this type
+            const availablePets = user.pets.filter(pet => pet.type === type && pet.health > 70);
+            
+            if (availablePets.length < 2) {
+                const typeText = type === 'cat' ? 'gatos' : 'peces';
+                alert(`Necesitas al menos 2 ${typeText} sanos para la cría`);
+                return;
+            }
+            
+            user.coins -= cost;
+            
+            // Create babies immediately (simplified)
+            const count = type === 'cat' ? 
+                Math.floor(Math.random() * 4) + 1 : // 1-4 kittens
+                Math.floor(Math.random() * 6) + 3;   // 3-8 fry
+            
+            const parent = availablePets[0];
+            
+            for (let i = 0; i < count; i++) {
+                const gender = Math.random() < 0.5 ? 'male' : 'female';
+                const names = gameState.petNames[type][gender];
+                const name = names[Math.floor(Math.random() * names.length)];
+                
+                const baby = {
+                    id: Date.now().toString() + '_' + i,
+                    name: name,
+                    type: type,
+                    breed: parent.breed,
+                    color: parent.color,
+                    gender: gender,
+                    emoji: parent.emoji,
+                    health: Math.random() * 20 + 80,
+                    happiness: Math.random() * 20 + 80,
+                    isBaby: true
+                };
+                
+                user.pets.push(baby);
+            }
+            
+            updateDisplay();
+            updatePetsDisplay();
+            saveGameData();
+            
+            const typeText = type === 'cat' ? 'gatitos' : 'alevines';
+            alert(`¡Felicidades! Has obtenido ${count} ${typeText} bebés.`);
+        }
+
+        function showPetDetails(petId) {
+            const user = gameState.users[gameState.currentUser];
+            const pet = user.pets.find(p => p.id === petId);
+            
+            if (!pet) return;
+            
+            const modal = document.getElementById('petModal');
+            const content = document.getElementById('petModalContent');
+            
+            const health = Math.round(pet.health);
+            const happiness = Math.round(pet.happiness);
+            
+            content.innerHTML = `
+                <div class="text-center">
+                    <div class="text-8xl mb-4">${pet.emoji}</div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">${pet.name}</h2>
+                    <p class="text-gray-600 mb-4">${pet.gender === 'male' ? '♂️' : '♀️'} ${pet.breed} • ${pet.color}</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-sm text-gray-600">Salud</p>
+                            <p class="text-lg font-semibold ${health > 70 ? 'text-green-600' : health > 40 ? 'text-yellow-600' : 'text-red-600'}">${health}%</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-sm text-gray-600">Felicidad</p>
+                            <p class="text-lg font-semibold ${happiness > 70 ? 'text-green-600' : happiness > 40 ? 'text-yellow-600' : 'text-red-600'}">${happiness}%</p>
+                        </div>
+                    </div>
+                    
+                    ${pet.isBaby ? `
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                            <p class="text-yellow-600 font-medium baby-pet">🍼 Es un bebé</p>
+                        </div>
+                    ` : ''}
+                    
+                    <button onclick="closeModal()" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
+                        Cerrar
+                    </button>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('petModal').classList.add('hidden');
+        }
+
+        function addRandomPetToShelter() {
+            const type = Math.random() < 0.5 ? 'cat' : 'fish';
+            const breeds = gameState.breeds[type];
+            const breed = breeds[Math.floor(Math.random() * breeds.length)];
+            const gender = Math.random() < 0.5 ? 'male' : 'female';
+            const names = gameState.petNames[type][gender];
+            const name = names[Math.floor(Math.random() * names.length)];
+            
+            const colors = ['negro', 'blanco', 'gris', 'naranja', 'marrón', 'atigrado'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            const newPet = {
+                id: Date.now() + Math.random(),
+                name: name,
+                type: type,
+                breed: breed,
+                color: color,
+                gender: gender,
+                emoji: type === 'cat' ? '🐱' : '🐠',
+                health: Math.round((Math.random() * 30 + 70)),
+                happiness: Math.round((Math.random() * 40 + 60))
+            };
+            
+            gameState.availablePets.push(newPet);
+            saveGameData();
+        }
+
+        // Add new pets periodically
+        setInterval(() => {
+            if (Math.random() < 0.3) {
+                addRandomPetToShelter();
+            }
+        }, 30000); // Every 30 seconds
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c69234843fda431',t:'MTc2OTg2MTc2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
