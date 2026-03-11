@@ -1,0 +1,20 @@
+{
+  "name": "TAMAGOCHI",
+  "short_name": "Tamagochi",
+  "start_url": "./app/old_versions/v8.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffcc00",
+  "icons": [
+    {
+      "src": "https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gato%20jugando%20(1).jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gato%20jugando%20(1).jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
