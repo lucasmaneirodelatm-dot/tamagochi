@@ -1,0 +1,44 @@
+[
+  {
+    "id": "pet_1",
+    "name": "Pez",
+    "type": "fish",
+    "emoji": "🐠",
+    "image": "https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gato%20jugando%20(1).jpg",
+    "breed": "Tipo de pez",
+    "waterType": "cold",
+    "tankSize": "small" | "medium" | "large",
+    "price": 100
+  },
+  {
+    "id": "pet_2",
+    "name": "Pez 2",
+    "type": "fish",
+    "emoji": "🐠",
+    "image": "https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gato%20jugando%20(1).jpg",
+    "breed": "Tipo de pez",
+    "waterType": "warm",
+    "tankSize": "large",
+    "price": 100
+  },
+  {
+    "id": "pet_3",
+    "name": "Pez 3",
+    "type": "fish",
+    "emoji": "🐠",
+    "image": "https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/cats/Gato%20jugando%20(1).jpg",
+    "breed": "Tipo de pez",
+    "waterType": "warm",
+    "tankSize": "medium",
+    "price": 100
+  },
+  {
+  "id": "pet_4",
+  "name": "Gato 4",
+  "type": "cat",
+  "emoji": "🐱",
+  "image": "https://lucasmaneirodelatm-dot.github.io/tamagochi/pictures/fishes/Acuario065.jpg",
+  "personality": "Descripción de personalidad",
+  "price": 150
+  }
+]
