@@ -4,7 +4,7 @@
 (() => {
   'use strict';
 
-  const API_BASE = 'https://gatos-y-peces-api.lucasmaneirodelatm.workers.dev.workers.dev';
+  const API_BASE = 'https://gatos-y-peces-api.lucasmaneirodelatm.workers.dev';
   const PRODUCT_INFO = {
     1: ['Alimento diario para gatos.', 'Recupera salud y felicidad al alimentar.'],
     2: ['Alimento específico para peces.', 'Recupera salud y felicidad al alimentar.'],
